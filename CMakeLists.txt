@@ -7,228 +7,222 @@ set(VERSION 0.1.0)
 
 
 # >>> Folders
-set(ROOT_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
+set(ROOT_DIR  "${CMAKE_CURRENT_SOURCE_DIR}")
 set(SOURCE_DIR "${ROOT_DIR}/src")
 set(BUILD_DIR "${CMAKE_CURRENT_BINARY_DIR}")
 
 
 # >>> Include guards
 if(PROJECT_SOURCE_DIR STREQUAL PROJECT_BINARY_DIR)
-	message(FATAL_ERROR ">> In-source builds not allowed. Please make a new directory (called a build directory) and run CMake from there.")
+  message(FATAL_ERROR ">> In-source builds not allowed. Please use a separate build directory.")
 endif()
 
 
 # >>> Set variable from environment by same name
 macro(set_from_environment VARIABLE)
-	if(NOT DEFINED ${VARIABLE} AND DEFINED ENV{${VARIABLE}})
-		set(${VARIABLE} $ENV{${VARIABLE}})
-	endif()
+  if(NOT DEFINED ${VARIABLE} AND DEFINED ENV{${VARIABLE}})
+    set(${VARIABLE} $ENV{${VARIABLE}})
+  endif()
 endmacro()
 
 
-# >>> Setup vcpkg
+# >>> Configuration options
+option(F4VR_BUILD_SHARED "Build F4VRCommonFramework as a shared library (DLL)" OFF)
+set(F4VR_LIB_TYPE STATIC)
+if(F4VR_BUILD_SHARED)
+  set(F4VR_LIB_TYPE SHARED)
+endif()
+# If your public headers live in include/, set this to that path instead of src/
+set(F4VR_PUBLIC_HEADER_BASE "${SOURCE_DIR}")
+
+
+# >>> vcpkg/toolchain & MSVC runtime
 set_from_environment(VCPKG_ROOT)
 if(DEFINED VCPKG_ROOT)
-	set(CMAKE_TOOLCHAIN_FILE "${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" CACHE STRING "")
-	set(VCPKG_TARGET_TRIPLET "x64-windows-static" CACHE STRING "")
-	set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>" CACHE STRING "")
+  set(CMAKE_TOOLCHAIN_FILE "${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" CACHE STRING "")
+  set(VCPKG_TARGET_TRIPLET "x64-windows-static" CACHE STRING "")
+  # Static runtime by default (Debug gets -Debug suffix)
+  set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>" CACHE STRING "")
 else()
-	message(FATAL_ERROR ">> Variable VCPKG_ROOT is not set!")
+  message(FATAL_ERROR ">> Variable VCPKG_ROOT is not set!")
 endif()
 
-
-# >>> Setup CommonLibF4 path
+# >>> CommonLibF4: locate and add
 set_from_environment(CommonLibF4Path)
-find_path(CommonLibF4PathLocal
-	CommonLibF4/include/REL/Relocation.h
-	PATHS
-	  ${CommonLibF4Path}
-	  CommonLibF4
-	  external/CommonLibF4
-	  ../CommonLibF4
+find_path(CommonLibF4PathFind
+  NAMES "CommonLibF4/include/REL/Relocation.h"
+  HINTS
+    "${CMAKE_CURRENT_LIST_DIR}/external/CommonLibF4" # nested under the framework
+    "${CMAKE_CURRENT_LIST_DIR}/CommonLibF4"
+    "${CMAKE_SOURCE_DIR}/external/CommonLibF4"       # sibling to the framework in the parent project
+    "${CMAKE_SOURCE_DIR}/CommonLibF4"
+    "${CMAKE_SOURCE_DIR}/../CommonLibF4"
+    "${CommonLibF4_ROOT}"
+    "${CommonLibF4Path}"
 )
-if(${CommonLibF4PathLocal} STREQUAL "CommonLibF4PathLocal-NOTFOUND")
-	message(FATAL_ERROR ">> CommonLibF4 Path not found! didn't init git modules? or not set CommonLibF4Path env variable?")
+if(${CommonLibF4PathFind} STREQUAL "CommonLibF4PathFind-NOTFOUND")
+  message(FATAL_ERROR ">> CommonLibF4 path not found! Did you init submodules or set CommonLibF4Path?")
 endif()
 
 
 # >>> Create Project
-project(
-	${NAME}
-	VERSION ${VERSION}
-	LANGUAGES CXX
-)
+project(${NAME} VERSION ${VERSION} LANGUAGES CXX)
 message(">>> Building '${PROJECT_NAME}' v:${PROJECT_VERSION}")
-message(">>> Using CommonLibF4: '${CommonLibF4PathLocal}'")
+message(">>> Using CommonLibF4: '${CommonLibF4PathFind}'")
 
-
-# >>> Set build flags
-# Suppresses Microsoft's "unsafe function" warnings (like strcpy, sprintf, etc.) in MSVC.
+# >>> Build flags / LTO
 add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
-# Optimizations
 set(Boost_USE_STATIC_RUNTIME OFF CACHE BOOL "")
+set(Boost_USE_STATIC_LIBS ON)
 set(CMAKE_INTERPROCEDURAL_OPTIMIZATION ON)
 set(CMAKE_INTERPROCEDURAL_OPTIMIZATION_DEBUG OFF)
-set(Boost_USE_STATIC_LIBS ON)
 
+# >>> Configure CLF4 for Fallout 4 VR before add_subdirectory
+set(F4SE_SUPPORT_XBYAK ON CACHE BOOL "" FORCE)
+set(ENABLE_FALLOUT_NG OFF CACHE BOOL "" FORCE)
+set(ENABLE_FALLOUT_F4 OFF CACHE BOOL "" FORCE)
+set(ENABLE_FALLOUT_VR ON  CACHE BOOL "" FORCE)
 
-# >>> Build CommonLibF4 dependency for Fallout-4-VR
-set(F4SE_SUPPORT_XBYAK ON CACHE BOOL "")
-set(ENABLE_FALLOUT_NG OFF CACHE BOOL "")
-set(ENABLE_FALLOUT_F4 OFF CACHE BOOL "")
-set(ENABLE_FALLOUT_VR ON CACHE BOOL "")
 if(NOT F4SE_SUPPORT_XBYAK OR ENABLE_FALLOUT_F4 OR ENABLE_FALLOUT_NG OR NOT ENABLE_FALLOUT_VR)
-    message(FATAL_ERROR ">> Invalid CommonLibF4 config, try deleting buildvr and rebuilding")
+  message(FATAL_ERROR ">> Invalid CommonLibF4 config, try deleting build and rebuilding.")
 endif()
-add_subdirectory(${CommonLibF4PathLocal} "CommonLibF4" EXCLUDE_FROM_ALL)
-# >>> IMPORTANT:
-# For CommonLibF4 to build successfully you must satisfy it's vcpkg dependencies
-# AND specify <"builtin-baseline": "b4a3d89125e45bc8f80fb94bef9761d4f4e14fb9"> as it will fail to build with latests"
+
+# Bring in CLF4 (expects it to export CommonLibF4::CommonLibF4)
+add_subdirectory(${CommonLibF4PathFind} "CommonLibF4" EXCLUDE_FROM_ALL)
+# NOTE: Ensure your vcpkg manifest pins the CLF4-compatible baseline (e.g. "builtin-baseline": "b4a3d89125e45bc8f80fb94bef9761d4f4e14fb9")
 
 
-# >>> Add version files
-configure_file(
-	${ROOT_DIR}/cmake/version.rc.in
-	${BUILD_DIR}/version.rc
-	@ONLY
-)
-configure_file(
-	${ROOT_DIR}/cmake/Version.h.in
-	${BUILD_DIR}/include/Version.h
-	@ONLY
-)
-source_group(
-	TREE ${BUILD_DIR}
-	FILES ${BUILD_DIR}/include/Version.h
-)
+# >>> Version stamping
+configure_file(${ROOT_DIR}/cmake/version.rc.in ${BUILD_DIR}/version.rc @ONLY)
+configure_file(${ROOT_DIR}/cmake/Version.h.in  ${BUILD_DIR}/include/Version.h @ONLY)
+source_group(TREE ${BUILD_DIR} FILES ${BUILD_DIR}/include/Version.h)
 
 
-# >>> Add all headers and source files in src folder
+# >>> Sources
 file(GLOB_RECURSE headers CONFIGURE_DEPENDS "${SOURCE_DIR}/*.h")
 file(GLOB_RECURSE sources CONFIGURE_DEPENDS "${SOURCE_DIR}/*.cpp")
-file(GLOB_RECURSE inls CONFIGURE_DEPENDS "${SOURCE_DIR}/*.inl")
-source_group(
-	TREE ${ROOT_DIR}
-	FILES ${headers} ${sources}	${inls}
+file(GLOB_RECURSE inls    CONFIGURE_DEPENDS "${SOURCE_DIR}/*.inl")
+
+source_group(TREE ${ROOT_DIR} FILES ${headers} ${sources} ${inls})
+
+set(resource_files
+  ${BUILD_DIR}/include/Version.h
+  ${BUILD_DIR}/version.rc
+  "${ROOT_DIR}/.clang-format"
+  "${ROOT_DIR}/.editorconfig"
 )
 
-source_group(
-	"Resource Files"
-	FILES ${resource_files}
+source_group("Resource Files" FILES ${resource_files})
+
+
+# >>> Library (STATIC by default)
+add_library(${PROJECT_NAME} ${F4VR_LIB_TYPE}
+  ${headers} ${sources} ${inls}
+  ${resource_files}
 )
 
-# >>> Create VS project for DLL
-add_library(
-	${PROJECT_NAME}
-	SHARED
-	${headers}
-	${sources}
-	${inls}
-	${resource_files}
-	${BUILD_DIR}/include/Version.h
-	${BUILD_DIR}/version.rc
-	"${ROOT_DIR}/.clang-format"
-	"${ROOT_DIR}/.editorconfig"
+# Export a stable namespaced alias
+add_library(F4VRCommon::framework ALIAS ${PROJECT_NAME})
+
+# C++ standard
+target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_23)
+
+# Defines
+target_compile_definitions(${PROJECT_NAME}
+  PRIVATE
+    _UNICODE
 )
 
-# Set compile target to C++23
-target_compile_features(
-	${PROJECT_NAME}
-	PRIVATE
-	cxx_std_23
+# Public headers for consumers (switch base to ${ROOT_DIR}/include if you have one)
+# If you use CMake 3.23+, you can propagate headers with FILE_SET:
+if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.23")
+  target_sources(${PROJECT_NAME}
+    PUBLIC
+      FILE_SET HEADERS
+      BASE_DIRS ${F4VR_PUBLIC_HEADER_BASE}
+      FILES ${headers}
+  )
+endif()
+
+# Include dirs
+target_include_directories(${PROJECT_NAME}
+  PUBLIC
+    ${F4VR_PUBLIC_HEADER_BASE}       # expose your public headers to consumers
+    ${BUILD_DIR}/include             # Version.h
+  PRIVATE
+    ${SOURCE_DIR}
 )
-# Use _UNICODE macro to support CreateFileW
-target_compile_definitions(
-	${PROJECT_NAME}
-	PRIVATE
-	_UNICODE
+
+# Dependencies
+target_link_libraries(${PROJECT_NAME}
+  PUBLIC
+    CommonLibF4::CommonLibF4
 )
-# Include paths
-target_include_directories(
-	${PROJECT_NAME}
-	PRIVATE
-	${BUILD_DIR}/include
-	${SOURCE_DIR}
-	${CommonLibF4PathLocal}/CommonLibF4/include
-	${ROOT_DIR}/external/openvr
-)
-# Libraries (.lib) to link
-target_link_libraries(
-	${PROJECT_NAME}
-	PRIVATE
-	CommonLibF4::CommonLibF4
-	${ROOT_DIR}/external/openvr/openvr_api.lib
-)
+
+# cpptrace (via vcpkg)
 find_package(cpptrace CONFIG REQUIRED)
 target_link_libraries(${PROJECT_NAME} PRIVATE cpptrace::cpptrace)
-# Add precompiled header (PCH.h)
-target_precompile_headers(
-	${PROJECT_NAME}
-	PRIVATE
-	src/PCH.h
-)
 
 
-# >>> Set project options
-target_compile_options(
-	${PROJECT_NAME}
-	PRIVATE
-	/sdl # Enable Additional Security Checks
+# >>> OpenVR
+set(_OPENVR_DIR "${ROOT_DIR}/external/openvr")
+find_library(OPENVR_LIB NAMES openvr_api PATHS "${_OPENVR_DIR}" NO_DEFAULT_PATH)
+find_path(OPENVR_INC NAMES openvr.h PATHS "${_OPENVR_DIR}" NO_DEFAULT_PATH)
+if(OPENVR_LIB AND OPENVR_INC)
+target_include_directories(${PROJECT_NAME} PRIVATE ${OPENVR_INC})
+target_link_libraries(${PROJECT_NAME} PRIVATE ${OPENVR_LIB})
+else()
+message(FATAL_ERROR ">> OpenVR not found at ${_OPENVR_DIR};")
+endif()
+
+
+# Precompiled header
+target_precompile_headers(${PROJECT_NAME} PRIVATE src/PCH.h)
+
+# >>> Compile / Link options
+target_compile_options(${PROJECT_NAME}
+  PRIVATE
+    /sdl # Enable Additional Security Checks
 	/utf-8 # Set Source and Executable character sets to UTF-8
 	/Zi # Debug Information Format
-
-	/permissive- # Standards conformance
-
-	/Zc:alignedNew # C++17 over-aligned allocation
+    /permissive- # Standards conformance
+    /Zc:alignedNew # C++17 over-aligned allocation
 	/Zc:auto # Deduce Variable Type
 	/Zc:char8_t
 	/Zc:__cplusplus # Enable updated __cplusplus macro
 	/Zc:externC
 	/Zc:externConstexpr # Enable extern constexpr variables
-	/Zc:forScope # Force Conformance in for Loop Scope
+
+    /Zc:forScope # Force Conformance in for Loop Scope
 	/Zc:hiddenFriend
 	/Zc:implicitNoexcept # Implicit Exception Specifiers
 	/Zc:lambda
 	/Zc:noexceptTypes # C++17 noexcept rules
-	/Zc:preprocessor # Enable preprocessor conformance mode
+
+    /Zc:preprocessor # Enable preprocessor conformance mode
 	/Zc:referenceBinding # Enforce reference binding rules
 	/Zc:rvalueCast # Enforce type conversion rules
 	/Zc:sizedDealloc # Enable Global Sized Deallocation Functions
 	/Zc:strictStrings # Disable string literal type conversion
-	/Zc:ternary # Enforce conditional operator rules
+
+    /Zc:ternary # Enforce conditional operator rules
 	/Zc:threadSafeInit # Thread-safe Local Static Initialization
 	/Zc:tlsGuards
 	/Zc:trigraphs # Trigraphs Substitution
 	/Zc:wchar_t # wchar_t Is Native Type
-
-	/external:anglebrackets
+    /external:anglebrackets
 	/external:W0
 
-	/W4 # Warning level
-	# /WX # Warning level (warnings are errors)
-
-	# Potentials warnings to disable
-	# /wd4702
-	# /wd4267
-	# /wd4456
-	# /wd4189
-	# /wd4244
-	# /wd4834
-	# /wd4189
-	# /wd4505
-
-	"$<$<CONFIG:DEBUG>:>"
-	"$<$<CONFIG:RELEASE>:/Zc:inline;/JMC-;/Ob3>"
+    /W4 # Warning level
+    "$<$<CONFIG:RELEASE>:/Zc:inline;/JMC-;/Ob3>"
 )
 
-target_link_options(
-	${PROJECT_NAME}
-	PRIVATE
-	/WX # Treat Linker Warnings as Errors
-
-	"$<$<CONFIG:DEBUG>:/INCREMENTAL;/OPT:NOREF;/OPT:NOICF>"
-	"$<$<CONFIG:RELEASE>:/INCREMENTAL:NO;/OPT:REF;/OPT:ICF;/DEBUG:FULL>"
+target_link_options(${PROJECT_NAME}
+  PRIVATE
+    /WX
+    "$<$<CONFIG:DEBUG>:/INCREMENTAL;/OPT:NOREF;/OPT:NOICF>"
+    "$<$<CONFIG:RELEASE>:/INCREMENTAL:NO;/OPT:REF;/OPT:ICF;/DEBUG:FULL>"
 )
 
-# >>> fix a warning with /Ob2 being overridden with /Ob3
+# >>> Fix a warning with /Ob2 being overridden with /Ob3
 string(REPLACE "/Ob2" "/Ob3" CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}")
