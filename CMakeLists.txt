@@ -164,20 +164,43 @@ find_package(cpptrace CONFIG REQUIRED)
 target_link_libraries(${PROJECT_NAME} PRIVATE cpptrace::cpptrace)
 
 
-# >>> OpenVR
-set(_OPENVR_DIR "${ROOT_DIR}/external/openvr")
-find_library(OPENVR_LIB NAMES openvr_api PATHS "${_OPENVR_DIR}" NO_DEFAULT_PATH)
-find_path(OPENVR_INC NAMES openvr.h PATHS "${_OPENVR_DIR}" NO_DEFAULT_PATH)
-if(OPENVR_LIB AND OPENVR_INC)
-target_include_directories(${PROJECT_NAME} PRIVATE ${OPENVR_INC})
-target_link_libraries(${PROJECT_NAME} PRIVATE ${OPENVR_LIB})
-else()
-message(FATAL_ERROR ">> OpenVR not found at ${_OPENVR_DIR};")
+# >>> OpenVR (vcpkg first, then vendored fallback)
+option(F4VR_WITH_OPENVR "Enable OpenVR in the framework" ON)
+if(F4VR_WITH_OPENVR)
+  # Prefer vcpkg port if available
+  find_package(openvr CONFIG QUIET)
+
+  if(TARGET OpenVR::OpenVR)
+    # vcpkg provided it
+    target_link_libraries(${PROJECT_NAME} PUBLIC OpenVR::OpenVR)
+    target_compile_definitions(${PROJECT_NAME} PUBLIC F4VR_WITH_OPENVR=1)
+    message(STATUS "OpenVR: using vcpkg package")
+  else()
+    # Vendored SDK relative to THIS framework dir (not the superproject)
+    set(_OPENVR_ROOT     "${CMAKE_CURRENT_LIST_DIR}/external/openvr")
+    set(_OPENVR_HEADERS  "${_OPENVR_ROOT}/openvr.h")
+    set(_OPENVR_LIBPATH  "${_OPENVR_ROOT}/openvr_api.lib")
+
+    if(EXISTS "${_OPENVR_HEADERS}" AND EXISTS "${_OPENVR_LIBPATH}")
+      # Create an imported target with CORRECT include dir (headers/) only
+      add_library(OpenVR::OpenVR UNKNOWN IMPORTED)
+      set_target_properties(OpenVR::OpenVR PROPERTIES
+        IMPORTED_LOCATION             "${_OPENVR_LIBPATH}"
+        INTERFACE_INCLUDE_DIRECTORIES "${_OPENVR_ROOT}"
+      )
+      target_link_libraries(${PROJECT_NAME} PUBLIC OpenVR::OpenVR)
+      target_compile_definitions(${PROJECT_NAME} PUBLIC F4VR_WITH_OPENVR=1)
+      message(">>> OpenVR: using vendored SDK at \"${_OPENVR_ROOT}\"")
+    else()
+      message(FATAL_ERROR ">>> OpenVR not found! Either install vcpkg port 'openvr' OR place the SDK at: \"${_OPENVR_ROOT}\"")
+    endif()
+  endif()
 endif()
 
 
-# Precompiled header
+# >>> Precompiled header
 target_precompile_headers(${PROJECT_NAME} PRIVATE src/PCH.h)
+
 
 # >>> Compile / Link options
 target_compile_options(${PROJECT_NAME}
