@@ -1,4 +1,6 @@
 #include "UIManager.h"
+
+#include "ModBase.h"
 #include "../Debug.h"
 #include "../common/Logger.h"
 
@@ -39,10 +41,9 @@ namespace vrui
             adapter->setInteractionHandPointing(false, isInteractionClose.value());
         }
 
-        // TODO: handle without g_config access
-        // if (frik::g_config.checkDebugDumpDataOnceFor("ui_tree")) {
-        //     dumpUITree();
-        // }
+        if (f4cf::g_mod->getConfig()->checkDebugDumpDataOnceFor("ui_tree")) {
+            dumpUITree();
+        }
     }
 
     /**
