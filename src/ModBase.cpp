@@ -3,6 +3,7 @@
 #include <cpptrace/from_current.hpp>
 #include <fmt/chrono.h>
 
+#include "Debug.h"
 #include "MainLoopHook.h"
 #include "common/Logger.h"
 #include "f4vr/VRControllersManager.h"
@@ -12,14 +13,14 @@ using namespace common;
 
 namespace f4cf
 {
-    ModBase::Settings::Settings(const std::string_view& name, const std::string_view& version, common::ConfigBase* config):
+    ModBase::Settings::Settings(const std::string_view& name, const std::string_view& version, ConfigBase* config) :
         name(name),
         version(version),
         config(config),
         logFileName(name) {}
 
-    ModBase::Settings::Settings(const std::string_view& name, const std::string_view& version, common::ConfigBase* config, const int trampolineAllocationSize,
-        const bool setupMainGameLoop):
+    ModBase::Settings::Settings(const std::string_view& name, const std::string_view& version, ConfigBase* config, const int trampolineAllocationSize,
+        const bool setupMainGameLoop) :
         name(name),
         version(version),
         config(config),
@@ -27,8 +28,8 @@ namespace f4cf
         trampolineAllocationSize(trampolineAllocationSize),
         setupMainGameLoop(setupMainGameLoop) {}
 
-    ModBase::Settings::Settings(const std::string_view& name, const std::string_view& version, common::ConfigBase* config, const std::string_view& logFileName,
-        const int trampolineAllocationSize, const bool setupMainGameLoop):
+    ModBase::Settings::Settings(const std::string_view& name, const std::string_view& version, ConfigBase* config, const std::string_view& logFileName,
+        const int trampolineAllocationSize, const bool setupMainGameLoop) :
         name(name),
         version(version),
         config(config),
@@ -36,7 +37,7 @@ namespace f4cf
         trampolineAllocationSize(trampolineAllocationSize),
         setupMainGameLoop(setupMainGameLoop) {}
 
-    ModBase::ModBase(Settings settings):
+    ModBase::ModBase(Settings settings) :
         _settings(std::move(settings))
     {
         if (g_mod) {
@@ -125,6 +126,8 @@ namespace f4cf
                 f4vr::VRControllers.update(f4vr::isLeftHandedMode());
 
                 onFrameUpdate();
+
+                checkDebugDump();
             }
         CPPTRACE_CATCH(const std::exception& ex) {
             const auto stacktrace = cpptrace::from_current_exception().to_string();
@@ -210,6 +213,31 @@ namespace f4cf
             const auto stacktrace = cpptrace::from_current_exception().to_string();
             logger::critical("Error in onGameSessionLoaded: {}\n{}", ex.what(), stacktrace);
             throw;
+        }
+    }
+
+    /**
+     * Dump game data if requested in "sDebugDumpDataOnceNames" flag in INI config.
+     */
+    void ModBase::checkDebugDump() const
+    {
+        if (_settings.config->checkDebugDumpDataOnceFor("all_nodes")) {
+            dump::printAllNodes();
+        }
+        if (_settings.config->checkDebugDumpDataOnceFor("pipboy")) {
+            dump::printNodes(f4vr::getPlayerNodes()->PipboyRoot_nif_only_node);
+        }
+        if (_settings.config->checkDebugDumpDataOnceFor("world")) {
+            dump::printNodes(f4vr::getPlayerNodes()->primaryWeaponScopeCamera->parent->parent->parent->parent->parent->parent);
+        }
+        if (_settings.config->checkDebugDumpDataOnceFor("fp_skelly")) {
+            dump::printNodes(f4vr::getFirstPersonSkeleton());
+        }
+        if (_settings.config->checkDebugDumpDataOnceFor("skelly")) {
+            dump::printNodes(f4vr::getRootNode()->parent);
+        }
+        if (_settings.config->checkDebugDumpDataOnceFor("geometry")) {
+            dump::dumpPlayerGeometry();
         }
     }
 }

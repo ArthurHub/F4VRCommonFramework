@@ -53,6 +53,9 @@ namespace f4cf
         // Runs on every game frame, main logic goes here.
         virtual void onFrameUpdate() = 0;
 
+        // Dump game data if requested in "sDebugDumpDataOnceNames" flag in INI config.
+        virtual void checkDebugDump() const;
+
         Settings _settings;
         const F4SE::MessagingInterface* _messaging = nullptr;
     };

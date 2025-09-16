@@ -78,7 +78,7 @@ namespace
     }
 }
 
-namespace frik
+namespace f4cf::dump
 {
     void printMatrix(const RE::NiMatrix3* mat)
     {
@@ -160,8 +160,9 @@ namespace frik
     /**
      * Dump the player body parts and whatever they are hidden.
      */
-    void dumpPlayerGeometry(RE::BSFadeNode* rn)
+    void dumpPlayerGeometry()
     {
+        const auto rn = reinterpret_cast<RE::BSFadeNode*>(f4vr::getWorldRootNode());
         for (std::uint32_t i = 0; i < rn->geomArray.size(); ++i) {
             const auto& geometry = rn->geomArray[i].geometry;
             logger::info("Geometry[{}] = '{}' ({})", i, geometry->name.c_str(), geometry->flags.flags & 0x1 ? "Hidden" : "Visible");

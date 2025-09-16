@@ -70,7 +70,7 @@ namespace f4vr
             });
         }
 
-        void debugDumpAllMenus()
+        void debugDumpAllMenus() const
         {
             common::logger::info("Current game menu state:");
             for (const auto& [menuName, isOpen] : _gameMenuState) {
