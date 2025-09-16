@@ -12,22 +12,37 @@ using namespace common;
 
 namespace f4cf
 {
-    ModBase::ModBase(
-        const std::string_view& name,
-        const std::string_view& version,
-        ConfigBase* config,
-        const int trampolineAllocationSize):
-        _name(name),
-        _version(version),
-        _config(config)
+    ModBase::Settings::Settings(const std::string_view& name, const std::string_view& version, common::ConfigBase* config):
+        name(name),
+        version(version),
+        config(config),
+        logFileName(name) {}
+
+    ModBase::Settings::Settings(const std::string_view& name, const std::string_view& version, common::ConfigBase* config, const int trampolineAllocationSize,
+        const bool setupMainGameLoop):
+        name(name),
+        version(version),
+        config(config),
+        logFileName(name),
+        trampolineAllocationSize(trampolineAllocationSize),
+        setupMainGameLoop(setupMainGameLoop) {}
+
+    ModBase::Settings::Settings(const std::string_view& name, const std::string_view& version, common::ConfigBase* config, const std::string_view& logFileName,
+        const int trampolineAllocationSize, const bool setupMainGameLoop):
+        name(name),
+        version(version),
+        config(config),
+        logFileName(logFileName),
+        trampolineAllocationSize(trampolineAllocationSize),
+        setupMainGameLoop(setupMainGameLoop) {}
+
+    ModBase::ModBase(Settings settings):
+        _settings(std::move(settings))
     {
         if (g_mod) {
-            throw std::runtime_error("mod already initialized for " + g_mod->_name);
+            throw std::runtime_error("mod already initialized for " + g_mod->_settings.name);
         }
         g_mod = this;
-
-        // allocate enough space for patches and hooks
-        F4SE::AllocTrampoline(trampolineAllocationSize);
     }
 
     /**
@@ -38,12 +53,12 @@ namespace f4cf
         bool success = false;
         CPPTRACE_TRY
             {
-                logger::init(getLogFileName());
+                logger::init(_settings.logFileName);
                 logPluginGameStart();
 
                 info->infoVersion = F4SE::PluginInfo::kVersion;
-                info->name = _name.c_str();
-                std::string tmp = _version;
+                info->name = _settings.name.c_str();
+                std::string tmp = _settings.version;
                 std::erase(tmp, '.');
                 info->version = std::stoi(tmp);
 
@@ -77,11 +92,14 @@ namespace f4cf
                 F4SE::Init(f4se, false);
 
                 logger::info("Init config...");
-                _config->load();
+                _settings.config->load();
 
                 logger::info("Register F4SE messages...");
                 _messaging = F4SE::GetMessagingInterface();
                 _messaging->RegisterListener(onF4VRSEMessage);
+
+                // allocate enough space for patches and hooks
+                F4SE::AllocTrampoline(_settings.trampolineAllocationSize);
 
                 logger::info("Load Mod...");
                 onModLoaded(f4se);
@@ -121,7 +139,7 @@ namespace f4cf
         const auto runtimeVer = REL::Module::get().version();
         const auto dateTime = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
         logger::info("Starting '{}' v{} ; {} v{} ; {:%Y-%m-%d %H:%M:%S%Ez} ; BaseAddress: 0x{:X}",
-            _name, _version, game, runtimeVer.string(), fmt::localtime(dateTime), REL::Module::get().base());
+            _settings.name, _settings.version, game, runtimeVer.string(), fmt::localtime(dateTime), REL::Module::get().base());
     }
 
     /**
@@ -156,7 +174,9 @@ namespace f4cf
             {
                 vrui::initUIManager();
 
-                main_hook::hook();
+                if (_settings.setupMainGameLoop) {
+                    main_hook::hook();
+                }
 
                 onGameLoaded();
             }
@@ -175,12 +195,14 @@ namespace f4cf
     {
         CPPTRACE_TRY
             {
-                main_hook::validate();
+                if (_settings.setupMainGameLoop) {
+                    main_hook::validate();
+                }
 
                 f4vr::VRControllers.reset();
 
                 logger::info("Reload config...");
-                _config->load();
+                _settings.config->load();
 
                 onGameSessionLoaded();
             }

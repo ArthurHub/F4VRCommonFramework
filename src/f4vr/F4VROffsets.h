@@ -41,7 +41,7 @@ namespace f4vr
     inline REL::Relocation<_NiNode_UpdateWorldBound> NiNode_UpdateWorldBound(REL::Offset(0x1c18ab0));
 
     using _AIProcess_Set2DUpdateFlags = void(*)(F4SEVR::Actor::MiddleProcess* proc, uint64_t flags);
-    inline REL::Relocation<_AIProcess_Set2DUpdateFlags> AIProcess_Set3DUpdateFlags(REL::Offset(0x0));
+    inline REL::Relocation<_AIProcess_Set2DUpdateFlags> AIProcess_Set3DUpdateFlags(REL::Offset(0xec8ce0));
 
     using _CombatUtilities_IsActorUsingMelee = bool(*)(F4SEVR::Actor* a_actor);
     inline REL::Relocation<_CombatUtilities_IsActorUsingMelee> CombatUtilities_IsActorUsingMelee(REL::Offset(0x1133bb0));
@@ -248,4 +248,69 @@ namespace f4vr
     // Native function that takes the 1st person skeleton weapon node and calculates the skeleton from upper-arm down based off the offsetNode
     using _Update1StPersonArm = void* (*)(const RE::PlayerCharacter* pc, RE::NiNode** weapon, RE::NiNode** offsetNode);
     inline REL::Relocation<_Update1StPersonArm> Update1StPersonArm(REL::Offset(0xef6280));
+
+    // Taken from FRIK hooks
+    //REL::Relocation<uintptr_t> hookBeforeRenderer(REL::Offset(0xd844bc));   // this hook didn't work as only a few nodes get moved
+    inline REL::Relocation hookBeforeRenderer(REL::Offset(0x1C21156));
+    // This hook is in member function REL::Offset(0x33) for BSFlattenedBoneTree right before it updates it's own data buffer of all the skeleton world transforms.   I think that buffer is what actually gets rendered
+
+    inline REL::Relocation hookAnimationVFunc(REL::Offset(0xf2f0a8)); // This is PostUpdateAnimationGraphManager virtual function that updates the player skeleton below the hmd.
+
+    inline REL::Relocation hookPlayerUpdate(REL::Offset(0xf1004c));
+
+    inline REL::Relocation hookBoneTreeUpdate(REL::Offset(0xd84ee4));
+
+    inline REL::Relocation hookEndUpdate(REL::Offset(0xd84f2c));
+    inline REL::Relocation hookMainDrawCandidate(REL::Offset(0xd844bc));
+    inline REL::Relocation hookMainDrawandUi(REL::Offset(0xd87ace));
+
+    using _hookedFunc = void(*)(uint64_t param1, uint64_t param2, uint64_t param3);
+    inline REL::Relocation<_hookedFunc> hookedFunc(REL::Offset(0x1C18620));
+
+    using _hookedPosPlayerFunc = void(*)(double param1, double param2, double param3);
+    inline REL::Relocation<_hookedPosPlayerFunc> hookedPosPlayerFunc(REL::Offset(0x2841530));
+
+    using _hookedMainDrawCandidateFunc = void(*)(uint64_t param1, uint64_t param2, uint64_t param3, uint64_t param4);
+    inline REL::Relocation<_hookedMainDrawCandidateFunc> hookedMainDrawCandidateFunc(REL::Offset(0xd831f0));
+
+    using _hookedf10ed0 = void(*)(uint64_t pc);
+    inline REL::Relocation<_hookedf10ed0> hookedf10ed0(REL::Offset(0xf10ed0));
+
+    using _hookedda09a0 = void(*)(uint64_t parm);
+    inline REL::Relocation<_hookedda09a0> hookedda09a0(REL::Offset(0xda09a0));
+
+    using _hooked1c22fb0 = void(*)(uint64_t a, uint64_t b);
+    inline REL::Relocation<_hooked1c22fb0> hooked1c22fb0(REL::Offset(0x1c22fb0));
+
+    using _main_update_player = void(*)(uint64_t rcx, uint64_t rdx);
+    inline REL::Relocation<_main_update_player> main_update_player(REL::Offset(0x1c22fb0));
+    inline REL::Relocation hook_MainUpdatePlayer(REL::Offset(0x0f0ff6a));
+
+    using _hookMultiBoundCullingFunc = void(*)();
+    inline REL::Relocation<_hookMultiBoundCullingFunc> hookMultiBoundCullingFunc(REL::Offset(0x0d84930));
+    inline REL::Relocation hookMultiBoundCulling(REL::Offset(0x0d8445d));
+
+    using _smoothMovementHook = void(*)(uint64_t rcx);
+    inline REL::Relocation<_smoothMovementHook> smoothMovementHook(REL::Offset(0x1ba7ba0));
+    inline REL::Relocation hook_smoothMovementHook(REL::Offset(0xd83ec4));
+
+    using _someRandomFunc = void(*)(uint64_t rcx);
+    inline REL::Relocation<_someRandomFunc> someRandomFunc(REL::Offset(0xd3c820));
+    inline REL::Relocation hookSomeRandomFunc(REL::Offset(0xd8405e));
+
+    using _Actor_ReEquipAll = void(*)(F4SEVR::Actor* a_actor);
+    inline REL::Relocation<_Actor_ReEquipAll> Actor_ReEquipAll(REL::Offset(0xddf050));
+    inline REL::Relocation hookActor_ReEquipAllExit(REL::Offset(0xf01528));
+
+    using _ExtraData_SetMultiBoundRef = void(*)(std::uint64_t rcx, std::uint64_t rdx);
+    inline REL::Relocation<_ExtraData_SetMultiBoundRef> ExtraData_SetMultiBoundRef(REL::Offset(0x91320));
+    inline REL::Relocation hookExtraData_SetMultiBoundRef(REL::Offset(0xf00dc6));
+
+    inline REL::Relocation hookActor_GetCurrentWeaponForGunReload(REL::Offset(0xf3027c));
+
+    using _TESObjectREFR_SetupAnimationUpdateDataForRefernce = uint64_t(*)(uint64_t rcx, float* rdx);
+    inline REL::Relocation<_TESObjectREFR_SetupAnimationUpdateDataForRefernce> TESObjectREFR_SetupAnimationUpdateDataForRefernce(REL::Offset(0x4189c0));
+    inline REL::Relocation hookActor_SetupAnimationUpdateDataForRefernce(REL::Offset(0xf0fbdf));
+
+    inline REL::Relocation wandMesh(REL::Offset(0x2d686d8));
 }

@@ -7,10 +7,27 @@ namespace f4cf
     class ModBase
     {
     public:
-        ModBase(const std::string_view& name, const std::string_view& version, common::ConfigBase* config, int trampolineAllocationSize = 256);
+        struct Settings
+        {
+            std::string name;
+            std::string version;
+            common::ConfigBase* config;
+            std::string logFileName = name;
+            int trampolineAllocationSize = 256;
+            bool setupMainGameLoop = false;
+
+            Settings(const std::string_view& name, const std::string_view& version, common::ConfigBase* config);
+
+            Settings(const std::string_view& name, const std::string_view& version, common::ConfigBase* config, int trampolineAllocationSize, bool setupMainGameLoop);
+
+            Settings(const std::string_view& name, const std::string_view& version, common::ConfigBase* config, const std::string_view& logFileName, int trampolineAllocationSize,
+                bool setupMainGameLoop);
+        };
+
+        explicit ModBase(Settings settings);
         virtual ~ModBase() = default;
 
-        common::ConfigBase* getConfig() const { return _config; }
+        common::ConfigBase* getConfig() const { return _settings.config; }
 
         bool onF4SEPluginQuery(const F4SE::QueryInterface* skse, F4SE::PluginInfo* info) const;
         bool onF4SEPluginLoad(const F4SE::LoadInterface* f4se);
@@ -36,12 +53,7 @@ namespace f4cf
         // Runs on every game frame, main logic goes here.
         virtual void onFrameUpdate() = 0;
 
-        // Get the string to be used for the log file name.
-        virtual std::string_view getLogFileName() const { return _name; }
-
-        std::string _name;
-        std::string _version;
-        common::ConfigBase* _config = nullptr;
+        Settings _settings;
         const F4SE::MessagingInterface* _messaging = nullptr;
     };
 
