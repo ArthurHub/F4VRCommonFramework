@@ -19,7 +19,8 @@ namespace common
     class ConfigBase
     {
     public:
-        ConfigBase(const std::string_view& iniFilePath, const WORD iniDefaultConfigEmbeddedResourceId) :
+        ConfigBase(const std::string_view& module, const std::string_view& iniFilePath, const WORD iniDefaultConfigEmbeddedResourceId) :
+            _module(std::string(module)),
             _iniFilePath(iniFilePath),
             _iniDefaultConfigEmbeddedResourceId(iniDefaultConfigEmbeddedResourceId) {}
 
@@ -40,8 +41,8 @@ namespace common
         float debugFlowFlag1 = 0;
         float debugFlowFlag2 = 0;
         float debugFlowFlag3 = 0;
-        std::string debugFlowText1 = "";
-        std::string debugFlowText2 = "";
+        std::string debugFlowText1;
+        std::string debugFlowText2;
 
         /**
          * Check if debug data dump is requested for the given name.
@@ -82,7 +83,7 @@ namespace common
         void loadIniConfig()
         {
             // create .ini if it doesn't exist
-            createFileFromResourceIfNotExists(_iniFilePath, _iniDefaultConfigEmbeddedResourceId, true);
+            createFileFromResourceIfNotExists(_iniFilePath, _module, _iniDefaultConfigEmbeddedResourceId, true);
 
             loadIniConfigValues();
 
@@ -103,7 +104,7 @@ namespace common
          */
         int loadEmbeddedResourceIniConfigVersion() const
         {
-            const auto embeddedIniStr = getEmbededResourceAsString(_iniDefaultConfigEmbeddedResourceId);
+            const auto embeddedIniStr = getEmbededResourceAsString(_module, _iniDefaultConfigEmbeddedResourceId);
 
             CSimpleIniA ini;
             const SI_Error rc = ini.LoadData(embeddedIniStr);
@@ -384,7 +385,7 @@ namespace common
 
             // override the file with the default .ini resource.
             const auto tmpIniPath = std::string(_iniFilePath) + ".tmp";
-            createFileFromResourceIfNotExists(tmpIniPath, _iniDefaultConfigEmbeddedResourceId, true);
+            createFileFromResourceIfNotExists(tmpIniPath, _module, _iniDefaultConfigEmbeddedResourceId, true);
 
             CSimpleIniA newIni;
             rc = newIni.LoadFile(tmpIniPath.c_str());
@@ -496,6 +497,9 @@ namespace common
                     });
             }).detach();
         }
+
+        // name of the module DLL to read resources from
+        std::string _module;
 
     private:
         // location of ini config on disk

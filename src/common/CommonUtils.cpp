@@ -87,24 +87,24 @@ namespace common
     /**
      * Find dll embedded resource by id and return its data as string.
      */
-    std::string getEmbededResourceAsString(const WORD resourceId)
+    std::string getEmbededResourceAsString(const std::string& module, const WORD resourceId)
     {
         // Must specify the dll to read its resources and not the exe
-        const HMODULE hModule = GetModuleHandleA((std::string(Version::PROJECT) + ".dll").c_str());
+        const HMODULE hModule = GetModuleHandleA((module + ".dll").c_str());
         const HRSRC hRes = FindResource(hModule, MAKEINTRESOURCE(resourceId), RT_RCDATA);
         if (!hRes) {
-            throw std::runtime_error("Resource not found for id: " + std::to_string(resourceId));
+            throw std::runtime_error("Resource not found for module '" + module + "' id: " + std::to_string(resourceId));
         }
 
         const HGLOBAL hResData = LoadResource(hModule, hRes);
         if (!hResData) {
-            throw std::runtime_error("Failed to load resource for id: " + std::to_string(resourceId));
+            throw std::runtime_error("Failed to load resource for module '" + module + "' id: " + std::to_string(resourceId));
         }
 
         const DWORD dataSize = SizeofResource(hModule, hRes);
         const void* pData = LockResource(hResData);
         if (!pData) {
-            throw std::runtime_error("Failed to lock resource for id: " + std::to_string(resourceId));
+            throw std::runtime_error("Failed to lock resource for module '" + module + "' id: " + std::to_string(resourceId));
         }
 
         return std::string(static_cast<const char*>(pData), dataSize);
@@ -113,14 +113,14 @@ namespace common
     /**
      * If file at a given path doesn't exist then create it from the embedded resource.
      */
-    void createFileFromResourceIfNotExists(const std::string& filePath, const WORD resourceId, const bool fixNewline)
+    void createFileFromResourceIfNotExists(const std::string& filePath, const std::string& module, const WORD resourceId, const bool fixNewline)
     {
         if (std::filesystem::exists(filePath)) {
             return;
         }
 
         logger::info("Creating '{}' file from resource id: {}...", filePath.c_str(), resourceId);
-        auto data = getEmbededResourceAsString(resourceId);
+        auto data = getEmbededResourceAsString(module, resourceId);
 
         if (fixNewline) {
             // Remove all \r to ensure it uses only \n for new lines as ini library creates empty lines

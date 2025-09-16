@@ -3,6 +3,7 @@
 #include <cpptrace/from_current.hpp>
 #include <fmt/chrono.h>
 
+#include "MainLoopHook.h"
 #include "common/Logger.h"
 #include "f4vr/VRControllersManager.h"
 #include "ui/UIManager.h"
@@ -11,13 +12,22 @@ using namespace common;
 
 namespace f4cf
 {
-    ModBase::ModBase(const std::string_view& name, const std::string_view& project, const std::uint32_t version, ConfigBase* config):
+    ModBase::ModBase(
+        const std::string_view& name,
+        const std::string_view& version,
+        ConfigBase* config,
+        const int trampolineAllocationSize):
         _name(name),
-        _project(project),
         _version(version),
         _config(config)
     {
+        if (g_mod) {
+            throw std::runtime_error("mod already initialized for " + g_mod->_name);
+        }
         g_mod = this;
+
+        // allocate enough space for patches and hooks
+        F4SE::AllocTrampoline(trampolineAllocationSize);
     }
 
     /**
@@ -25,22 +35,33 @@ namespace f4cf
      */
     bool ModBase::onF4SEPluginQuery(const F4SE::QueryInterface* skse, F4SE::PluginInfo* info) const
     {
-        info->infoVersion = F4SE::PluginInfo::kVersion;
-        info->name = _name.c_str();
-        info->version = _version;
+        bool success = false;
+        CPPTRACE_TRY
+            {
+                logger::init(getLogFileName());
+                logPluginGameStart();
 
-        if (skse->IsEditor()) {
-            logger::critical("Loaded in editor, marking as incompatible");
-            return false;
+                info->infoVersion = F4SE::PluginInfo::kVersion;
+                info->name = _name.c_str();
+                std::string tmp = _version;
+                std::erase(tmp, '.');
+                info->version = std::stoi(tmp);
+
+                if (skse->IsEditor()) {
+                    logger::critical("Loaded in editor, marking as incompatible");
+                    // ReSharper disable once CppUnreachableCode
+                } else if (skse->RuntimeVersion() < (REL::Module::IsF4() ? F4SE::RUNTIME_LATEST : F4SE::RUNTIME_LATEST_VR)) {
+                    logger::critical("Unsupported runtime version {}", skse->RuntimeVersion().string());
+                } else {
+                    logger::info("F4SE Plugin Query v{} compatible: {} v{}", skse->F4SEVersion().string(), info->name, info->version);
+                    success = true;
+                }
+            }
+        CPPTRACE_CATCH(const std::exception& ex) {
+            const auto stacktrace = cpptrace::from_current_exception().to_string();
+            logger::error("Unhandled exception: {}\n{}", ex.what(), stacktrace);
         }
-
-        const auto ver = skse->RuntimeVersion();
-        if (ver < (REL::Module::IsF4() ? F4SE::RUNTIME_LATEST : F4SE::RUNTIME_LATEST_VR)) {
-            logger::critical("Unsupported runtime version {}", ver.string());
-            return false;
-        }
-
-        return true;
+        return success;
     }
 
     /**
@@ -52,24 +73,20 @@ namespace f4cf
         bool success = false;
         CPPTRACE_TRY
             {
-                logger::init(_project);
-                logPluginGameStart();
-
+                logger::info("Init CommonLibF4 F4SE...");
                 F4SE::Init(f4se, false);
 
                 logger::info("Init config...");
                 _config->load();
 
-                // allocate enough space for patches and hooks
-                F4SE::AllocTrampoline(4096);
-
+                logger::info("Register F4SE messages...");
                 _messaging = F4SE::GetMessagingInterface();
                 _messaging->RegisterListener(onF4VRSEMessage);
 
                 logger::info("Load Mod...");
                 onModLoaded(f4se);
 
-                logger::info("Mod load successful");
+                logger::info("Load successful");
                 success = true;
             }
         CPPTRACE_CATCH(const std::exception& ex) {
@@ -79,18 +96,38 @@ namespace f4cf
         return success;
     }
 
-    void ModBase::logPluginGameStart()
+    /**
+     * Runs on every game frame, main logic goes here.
+     * Handle any exceptions and log them.
+     */
+    void ModBase::onFrameUpdateSafe()
+    {
+        CPPTRACE_TRY
+            {
+                f4vr::VRControllers.update(f4vr::isLeftHandedMode());
+
+                onFrameUpdate();
+            }
+        CPPTRACE_CATCH(const std::exception& ex) {
+            const auto stacktrace = cpptrace::from_current_exception().to_string();
+            logger::critical("Error in onFrameUpdate: {}\n{}", ex.what(), stacktrace);
+            throw;
+        }
+    }
+
+    void ModBase::logPluginGameStart() const
     {
         const auto game = REL::Module::IsVR() ? "Fallout4VR" : "Fallout4";
         const auto runtimeVer = REL::Module::get().version();
         const auto dateTime = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-        logger::info("Starting '{}' v{} ; {} v{} ; {:%Y-%m-%d %H:%M:%S %Z} ; BaseAddress: 0x{:X}",
-            _project, _name, game, runtimeVer.string(), fmt::localtime(dateTime), REL::Module::get().base());
+        logger::info("Starting '{}' v{} ; {} v{} ; {:%Y-%m-%d %H:%M:%S%Ez} ; BaseAddress: 0x{:X}",
+            _name, _version, game, runtimeVer.string(), fmt::localtime(dateTime), REL::Module::get().base());
     }
 
     /**
      * F4VRSE messages listener to handle game loaded, new game, and save loaded events.
      */
+    // ReSharper disable once CppParameterMayBeConstPtrOrRef
     void ModBase::onF4VRSEMessage(F4SE::MessagingInterface::Message* msg)
     {
         if (!msg) {
@@ -119,6 +156,8 @@ namespace f4cf
             {
                 vrui::initUIManager();
 
+                main_hook::hook();
+
                 onGameLoaded();
             }
         CPPTRACE_CATCH(const std::exception& ex) {
@@ -136,6 +175,8 @@ namespace f4cf
     {
         CPPTRACE_TRY
             {
+                main_hook::validate();
+
                 f4vr::VRControllers.reset();
 
                 logger::info("Reload config...");

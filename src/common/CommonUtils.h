@@ -17,8 +17,8 @@ namespace common
 
     // Resource related functions
     std::optional<std::string> getEmbeddedResourceAsStringIfExists(WORD resourceId);
-    std::string getEmbededResourceAsString(WORD resourceId);
-    void createFileFromResourceIfNotExists(const std::string& filePath, WORD resourceId, bool fixNewline);
+    std::string getEmbededResourceAsString(const std::string& module, WORD resourceId);
+    void createFileFromResourceIfNotExists(const std::string& filePath, const std::string& module, WORD resourceId, bool fixNewline);
 
     // Filesystem related functions
     void createDirDeep(const std::string& pathStr);
