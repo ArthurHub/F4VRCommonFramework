@@ -2,10 +2,13 @@
 
 using namespace common;
 
+namespace
+{
+    const char* DEFAULT_SECTION = Version::PROJECT.data();
+}
+
 namespace my_mod
 {
-    static constexpr auto DEFAULT_SECTION = std::string(Version::PROJECT).c_str();
-
     void Config::loadIniConfigInternal(const CSimpleIniA& ini)
     {
         // TODO: load config from ini

@@ -99,12 +99,12 @@ namespace common
      * lightNode->local = calculateRelocation(lightNode, handNode);
      * This will move the light node to the hand node position and rotation.
      */
-    RE::NiTransform calculateRelocation(const RE::NiAVObject* fromNode, const RE::NiAVObject* toNode)
+    RE::NiTransform calculateRelocation(const RE::NiAVObject* fromNode, const RE::NiAVObject* toNode, const RE::NiPoint3 offset)
     {
         RE::NiTransform out;
         out.scale = fromNode->local.scale;
         out.rotate = toNode->world.rotate * fromNode->world.rotate.Transpose();
-        out.translate = fromNode->world.rotate * (toNode->world.translate - fromNode->world.translate) / fromNode->world.scale;
+        out.translate = fromNode->world.rotate * (toNode->world.translate + offset - fromNode->world.translate);
         return out;
     }
 

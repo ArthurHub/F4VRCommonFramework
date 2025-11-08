@@ -287,6 +287,36 @@ namespace f4vr
     }
 
     /**
+     * Find AV Object node by the given name prefix in the tree under the other given node recursively.
+     * Returns the first node found that starts with the given name.
+     */
+    RE::NiAVObject* findAVObjectStartsWith(RE::NiAVObject* node, const char* name, const int maxDepth)
+    {
+        if (!node) {
+            return nullptr;
+        }
+
+        if (_strnicmp(name, node->name.c_str(), std::strlen(name)) == 0) {
+            return node;
+        }
+
+        if (maxDepth < 1) {
+            return nullptr;
+        }
+
+        if (const auto niNode = node->IsNode()) {
+            for (const auto& child : niNode->children) {
+                if (child) {
+                    if (const auto result = findAVObjectStartsWith(child.get(), name, maxDepth - 1)) {
+                        return result;
+                    }
+                }
+            }
+        }
+        return nullptr;
+    }
+
+    /**
      * Find a node by the given name in the tree under the other given node recursively.
      */
     RE::NiNode* findNode(RE::NiAVObject* node, const char* name, const int maxDepth)
@@ -323,28 +353,8 @@ namespace f4vr
      */
     RE::NiNode* findNodeStartsWith(RE::NiAVObject* node, const char* name, const int maxDepth)
     {
-        if (!node) {
-            return nullptr;
-        }
-
-        if (_strnicmp(name, node->name.c_str(), std::strlen(name)) == 0) {
-            return node->IsNode();
-        }
-
-        if (maxDepth < 1) {
-            return nullptr;
-        }
-
-        if (const auto niNode = node->IsNode()) {
-            for (const auto& child : niNode->children) {
-                if (child) {
-                    if (const auto result = findNodeStartsWith(child.get(), name, maxDepth - 1)) {
-                        return result;
-                    }
-                }
-            }
-        }
-        return nullptr;
+        const auto avObj = findAVObjectStartsWith(node, name, maxDepth);
+        return avObj ? avObj->IsNode() : nullptr;
     }
 
     /**
