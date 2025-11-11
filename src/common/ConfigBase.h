@@ -498,13 +498,22 @@ namespace common
             }).detach();
         }
 
+        /**
+         * Stop current file watch.
+         */
+        void stopIniConfigFileWatch()
+        {
+            logger::info("Stop current file watch in INI config");
+            _iniConfigFileWatch.reset();
+        }
+
         // name of the module DLL to read resources from
         std::string _module;
 
-    private:
         // location of ini config on disk
         std::string _iniFilePath;
 
+    private:
         // resource id to use for default ini config
         WORD _iniDefaultConfigEmbeddedResourceId;
 
