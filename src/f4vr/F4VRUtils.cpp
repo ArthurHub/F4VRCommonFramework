@@ -106,6 +106,11 @@ namespace f4vr
         return IsInAir(getPlayer());
     }
 
+    bool isPlayerSneaking()
+    {
+        return IsSneaking(getPlayer());
+    }
+
     // Thanks Shizof and SmoothMovementVR for below code
     bool isInPowerArmor()
     {
@@ -211,6 +216,17 @@ namespace f4vr
         static auto iniAlwaysUseProjectedPipboy = reinterpret_cast<bool*>(REL::Offset(0x37B4280).address()); // NOLINT(performance-no-int-to-ptr)
         static auto iniAttachPipboyToHMD = reinterpret_cast<bool*>(REL::Offset(0x37B4298).address()); // NOLINT(performance-no-int-to-ptr)
         return !(*iniAlwaysUseProjectedPipboy || *iniAttachPipboyToHMD);
+    }
+
+    /**
+     * Get the "bComfortSneak:VR" setting from the INI file.
+     * Direct memory access is A LOT faster than "RE::INIPrefSettingCollection::GetSingleton()->GetSetting("bComfortSneak:VR")->GetBinary();"
+     */
+    bool isComfortSneakMode()
+    {
+        // not sure why RE::Relocation doesn't work here, so using raw address
+        static auto iniComfortSneakMode = reinterpret_cast<bool*>(REL::Offset(0x37D6178).address()); // NOLINT(performance-no-int-to-ptr)
+        return *iniComfortSneakMode;
     }
 
     /**

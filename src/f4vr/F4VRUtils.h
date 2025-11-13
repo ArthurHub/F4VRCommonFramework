@@ -21,6 +21,7 @@ namespace f4vr
     std::string getEquippedWeaponName();
     bool hasKeyword(const F4SEVR::TESObjectARMO* armor, std::uint32_t keywordFormId);
     bool isJumpingOrInAir();
+    bool isPlayerSneaking();
     bool isInPowerArmor();
     bool isInInternalCell();
     bool isSwimming(const RE::PlayerCharacter* player = RE::PlayerCharacter::GetSingleton());
@@ -30,6 +31,7 @@ namespace f4vr
     // settings
     bool isLeftHandedMode();
     bool isPipboyOnWrist();
+    bool isComfortSneakMode();
     bool useWandDirectionalMovement();
     RE::Setting* getIniSetting(const char* name, bool addNew = false);
 

@@ -6,7 +6,9 @@
 #include <shlobj_core.h>
 
 #include "Logger.h"
+#include "ModBase.h"
 #include "Version.h"
+#include "f4vr/PlayerNodes.h"
 
 namespace common
 {
@@ -311,5 +313,11 @@ namespace common
 
         input.close();
         return list;
+    }
+
+    RE::NiPoint3 getPointFromDebugFlowFlags()
+    {
+        const auto config = f4cf::g_mod->getConfig();
+        return RE::NiPoint3(config->debugFlowFlag1, config->debugFlowFlag2, config->debugFlowFlag3);
     }
 }

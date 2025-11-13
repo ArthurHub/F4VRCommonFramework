@@ -36,6 +36,7 @@ namespace common
     std::string toDateTimeString(std::chrono::system_clock::time_point time, const std::string& format = "%Y-%m-%d %H:%M:%S");
     std::string getCurrentTimeString();
     std::vector<std::string> loadListFromFile(const std::string& filePath);
+    RE::NiPoint3 getPointFromDebugFlowFlags();
 
     // Comparator
     struct CaseInsensitiveComparator
