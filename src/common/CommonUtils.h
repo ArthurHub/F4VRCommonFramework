@@ -37,6 +37,7 @@ namespace common
     std::string getCurrentTimeString();
     std::vector<std::string> loadListFromFile(const std::string& filePath);
     RE::NiPoint3 getPointFromDebugFlowFlags();
+    RE::NiMatrix3 getMatrixFromDebugFlowFlags();
 
     // Comparator
     struct CaseInsensitiveComparator

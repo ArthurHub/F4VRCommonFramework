@@ -8,13 +8,10 @@ namespace vrui
     {
     public:
         explicit UIToggleButton(const std::string& nifPath) :
-            UIToggleButton(getClonedNiNodeForNifFile(nifPath)) {}
-
-        explicit UIToggleButton(RE::NiNode* node) :
-            UIWidget(node), _toggleFrameNode(getClonedNiNodeForNifFile(getToggleButtonFrameNifName()))
+            UIWidget(nifPath)
         {
-            // TODO: replace with proper calculation of node size
-            _size = getButtonDefaultSize();
+            auto [frameNode, widthToHeightRatio] = getUINodeFromNifFile(getToggleButtonFrameNifName());
+            _toggleFrameNode.reset(frameNode);
         }
 
         // is the button is currently toggled ON or OFF

@@ -60,5 +60,6 @@ namespace f4vr
 
     // CommonLib migration
     RE::NiNode* loadNifFromFile(const std::string& path);
-    RE::NiNode* getClonedNiNodeForNifFile(const std::string& path, const std::string& name = "");
+    RE::NiNode* getClonedNiNodeForNifFile(const std::string& path);
+    RE::NiNode* getClonedNiNodeForNifFileSetName(const std::string& path, const std::string& name = "");
 }

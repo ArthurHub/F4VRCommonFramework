@@ -6,6 +6,7 @@
 #include <shlobj_core.h>
 
 #include "Logger.h"
+#include "MatrixUtils.h"
 #include "ModBase.h"
 #include "Version.h"
 #include "f4vr/PlayerNodes.h"
@@ -319,5 +320,11 @@ namespace common
     {
         const auto config = f4cf::g_mod->getConfig();
         return RE::NiPoint3(config->debugFlowFlag1, config->debugFlowFlag2, config->debugFlowFlag3);
+    }
+
+    RE::NiMatrix3 getMatrixFromDebugFlowFlags()
+    {
+        const auto config = f4cf::g_mod->getConfig();
+        return getMatrixFromEulerAngles(degreesToRads(config->debugFlowFlag1), degreesToRads(config->debugFlowFlag2), degreesToRads(config->debugFlowFlag3));
     }
 }

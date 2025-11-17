@@ -1,8 +1,26 @@
 #include "UIUtils.h"
 
-// TODO: refactor to move this dependency to common code
-#include "../Debug.h"
-#include "../f4vr/F4VROffsets.h"
+#include "common/Logger.h"
+
+namespace
+{
+    /**
+     * Extract the float value from the nif node name in this format: "VRUI (W/H:4.5)"
+     */
+    float extractWidthToHeightValueFronName(const std::string& nifName)
+    {
+        const auto pos = nifName.find(':');
+        if (pos == std::string::npos)
+            return -1.0f;
+
+        const auto end = nifName.find(')', pos);
+        if (end == std::string::npos)
+            return -1.0f;
+
+        const auto num = nifName.substr(pos + 1, end - pos - 1);
+        return std::stof(num);
+    }
+}
 
 namespace vrui
 {
@@ -36,27 +54,16 @@ namespace vrui
      * Get a RE::NiNode that can be used in game UI for the given .nif file.
      * Why is just loading not enough?
      */
-    RE::NiNode* getClonedNiNodeForNifFile(const std::string& path)
+    std::tuple<RE::NiNode*, float> getUINodeFromNifFile(const std::string& path)
     {
         auto& normPath = path._Starts_with("Data") ? path : "Data/Meshes/" + path;
-        const RE::NiNode* nifNode = loadNifFromFile(normPath.c_str());
-        f4vr::NiCloneProcess proc;
-        proc.unk18 = reinterpret_cast<uint64_t*>(f4vr::cloneAddr1.address());
-        proc.unk48 = reinterpret_cast<uint64_t*>(f4vr::cloneAddr2.address());
-        const auto uiNode = f4vr::cloneNode(nifNode, &proc);
-        uiNode->name = RE::BSFixedString(path.c_str());
-        return uiNode;
-    }
-
-    /**
-     * Load .nif file from the filesystem and return the root node.
-     */
-    RE::NiNode* loadNifFromFile(const char* path)
-    {
-        uint64_t flags[2] = { 0x0, 0xed };
-        uint64_t mem = 0;
-        f4vr::loadNif((uint64_t)path, (uint64_t)&mem, (uint64_t)&flags);
-        return reinterpret_cast<RE::NiNode*>(mem);
+        const auto nifNode = f4vr::getClonedNiNodeForNifFile(normPath);
+        const float widthHeightRatio = extractWidthToHeightValueFronName(nifNode->name.c_str());
+        if (widthHeightRatio < 0) {
+            common::logger::warn("UI node nif doesn't contain width-to-height ratio data! (Nif: {})", path.c_str());
+        }
+        nifNode->name = RE::BSFixedString(path.c_str());
+        return { nifNode, widthHeightRatio };
     }
 
     /**
@@ -82,11 +89,5 @@ namespace vrui
             }
         }
         return nullptr;
-    }
-
-    inline void getNodeWidthHeight(RE::NiNode*)
-    {
-        // const auto shape = node->GetAsBSTriShape();
-        // auto bla = shape->geometryData->vertexData->vertexBlock[0];
     }
 }

@@ -8,9 +8,11 @@ namespace vrui
     class UIWidget : public UIElement
     {
     public:
-        explicit UIWidget(const std::string& nifPath, const float scale = 1) :
-            UIWidget(getClonedNiNodeForNifFile(nifPath))
+        explicit UIWidget(const std::string& nifPath, const float scale = 1)
         {
+            auto [node, widthToHeightRatio] = getUINodeFromNifFile(nifPath);
+            _node.reset(node);
+            _size = getElementSize(widthToHeightRatio);
             setScale(scale);
         }
 

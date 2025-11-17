@@ -54,10 +54,7 @@ namespace f4vr
     /**
      * @return true if the player has any weapon in the hand (including fists).
      */
-    bool IsWeaponDrawn()
-    {
-        return getPlayer()->actorState.IsWeaponDrawn();
-    }
+    bool IsWeaponDrawn() { return getPlayer()->actorState.IsWeaponDrawn(); }
 
     /**
      * @return true if the equipped weapon is a melee weapon type.
@@ -72,9 +69,8 @@ namespace f4vr
         if (!inventory) {
             return false;
         }
-        return std::ranges::any_of(inventory->data, [](const auto& item) {
-            return item.object->formType == RE::ENUM_FORM_ID::kWEAP && item.stackData->flags.any(RE::BGSInventoryItem::Stack::Flag::kSlotMask);
-        });
+        return std::ranges::any_of(inventory->data,
+            [](const auto& item) { return item.object->formType == RE::ENUM_FORM_ID::kWEAP && item.stackData->flags.any(RE::BGSInventoryItem::Stack::Flag::kSlotMask); });
     }
 
     /**
@@ -101,15 +97,9 @@ namespace f4vr
         return false;
     }
 
-    bool isJumpingOrInAir()
-    {
-        return IsInAir(getPlayer());
-    }
+    bool isJumpingOrInAir() { return IsInAir(getPlayer()); }
 
-    bool isPlayerSneaking()
-    {
-        return IsSneaking(getPlayer());
-    }
+    bool isPlayerSneaking() { return IsSneaking(getPlayer()); }
 
     // Thanks Shizof and SmoothMovementVR for below code
     bool isInPowerArmor()
@@ -132,26 +122,17 @@ namespace f4vr
     /**
      * Is the player is current in an "internal cell" as inside a building, cave, etc.
      */
-    bool isInInternalCell()
-    {
-        return RE::PlayerCharacter::GetSingleton()->parentCell->IsInterior();
-    }
+    bool isInInternalCell() { return RE::PlayerCharacter::GetSingleton()->parentCell->IsInterior(); }
 
     /**
      * Is the player swimming either on the surface or underwater.
      */
-    bool isSwimming(const RE::PlayerCharacter* player)
-    {
-        return player && static_cast<int>(player->DoGetCharacterState()) == 5;
-    }
+    bool isSwimming(const RE::PlayerCharacter* player) { return player && static_cast<int>(player->DoGetCharacterState()) == 5; }
 
     /**
      * Is the player is currently underwater as detected by underwater timer being non-zero.
      */
-    bool isUnderwater(const RE::PlayerCharacter* player)
-    {
-        return player && player->underWaterTimer > 0;
-    }
+    bool isUnderwater(const RE::PlayerCharacter* player) { return player && player->underWaterTimer > 0; }
 
     /**
      * Check if movement from current position to target position is safe (no collisions).
@@ -376,18 +357,12 @@ namespace f4vr
     /**
      * Find a node by name restricted to firest level of children only.
      */
-    RE::NiNode* find1StChildNode(RE::NiAVObject* node, const char* name)
-    {
-        return findNode(node, name, 1);
-    }
+    RE::NiNode* find1StChildNode(RE::NiAVObject* node, const char* name) { return findNode(node, name, 1); }
 
     /**
      * Return true if the node is visible, false if it is hidden or null.
      */
-    bool isNodeVisible(const RE::NiNode* node)
-    {
-        return node && !(node->flags.flags & 0x1);
-    }
+    bool isNodeVisible(const RE::NiNode* node) { return node && !(node->flags.flags & 0x1); }
 
     /**
      * Change flags to show or hide a node
@@ -417,10 +392,7 @@ namespace f4vr
     }
 
     // TODO: this feels an overkill on how much it is called
-    void updateDownFromRoot()
-    {
-        updateDown(getRootNode(), true);
-    }
+    void updateDownFromRoot() { updateDown(getRootNode(), true); }
 
     void updateDown(RE::NiAVObject* node, const bool updateSelf, const char* ignoreNode)
     {
@@ -566,13 +538,24 @@ namespace f4vr
      * Get a RE::NiNode that can be used in game UI for the given .nif file.
      * Why is just loading not enough?
      */
-    RE::NiNode* getClonedNiNodeForNifFile(const std::string& path, const std::string& name)
+    RE::NiNode* getClonedNiNodeForNifFile(const std::string& path)
     {
         const RE::NiNode* nifNode = loadNifFromFile(path);
         NiCloneProcess proc;
         proc.unk18 = reinterpret_cast<uint64_t*>(cloneAddr1.address());
         proc.unk48 = reinterpret_cast<uint64_t*>(cloneAddr2.address());
         const auto uiNode = cloneNode(nifNode, &proc);
+        uiNode->name = nifNode->name;
+        return uiNode;
+    }
+
+    /**
+     * Get a RE::NiNode that can be used in game UI for the given .nif file.
+     * Why is just loading not enough?
+     */
+    RE::NiNode* getClonedNiNodeForNifFileSetName(const std::string& path, const std::string& name)
+    {
+        const auto uiNode = getClonedNiNodeForNifFile(path);
         uiNode->name = name.empty() ? path : name;
         return uiNode;
     }

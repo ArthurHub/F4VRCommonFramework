@@ -8,14 +8,10 @@ namespace vrui
     {
     public:
         explicit UIButton(const std::string& nifPath) :
-            UIButton(getClonedNiNodeForNifFile(nifPath)) {}
+            UIWidget(nifPath) {}
 
         explicit UIButton(RE::NiNode* node) :
-            UIWidget(node)
-        {
-            // TODO: replace with proper calculation of node size
-            _size = getButtonDefaultSize();
-        }
+            UIWidget(node) {}
 
         void setOnPressHandler(std::function<void(UIWidget*)> handler)
         {
