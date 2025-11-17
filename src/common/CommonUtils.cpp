@@ -9,7 +9,6 @@
 #include "MatrixUtils.h"
 #include "ModBase.h"
 #include "Version.h"
-#include "f4vr/PlayerNodes.h"
 
 namespace common
 {
