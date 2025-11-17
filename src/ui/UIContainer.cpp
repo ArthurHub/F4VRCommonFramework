@@ -4,6 +4,7 @@
 
 #include "UIManager.h"
 #include "common/CommonUtils.h"
+#include "common/Logger.h"
 
 namespace vrui
 {
@@ -258,6 +259,46 @@ namespace vrui
         _childElements.emplace_back(element);
         if (_attachNode) {
             g_uiManager->attachElement(element, _attachNode.get());
+        }
+    }
+
+    /**
+     * Write the layout properties of the element to the given map.
+     * Used for development layout setting to be able to adjust the properties via config files at runtime.
+     */
+    void UIContainer::writeDevLayoutProperties(const std::string& namePrefix, std::map<std::string, std::string>& propertiesMap) const
+    {
+        const auto key = namePrefix + _name;
+        propertiesMap[key] = std::format("Pos:({:.2f},{:.2f},{:.2f}), Scale:({:.2f}), Padding:({:.2f}), Layout:({})",
+            getPosition().x, getPosition().y, getPosition().z, getScale(), getPadding(), static_cast<int>(getLayout()));
+
+        for (const auto& childElm : _childElements) {
+            childElm->writeDevLayoutProperties(key + ".", propertiesMap);
+        }
+    }
+
+    /**
+     * Read the layout properties of the element to the given map.
+     * Used for development layout setting to be able to adjust the properties via config files at runtime.
+     */
+    void UIContainer::readDevLayoutProperties(const std::string& namePrefix, const std::map<std::string, std::string>& propertiesMap)
+    {
+        const auto key = namePrefix + _name;
+        try {
+            float x, y, z, scale, padding;
+            int layout;
+            if (std::sscanf(propertiesMap.at(key).c_str(), "Pos:(%f,%f,%f), Scale:(%f), Padding:(%f), Layout:(%d)", &x, &y, &z, &scale, &padding, &layout) == 6) { // NOLINT(cert-err34-c)
+                setPosition(x, y, z);
+                setScale(scale);
+                setPadding(padding);
+                setLayout(static_cast<UIContainerLayout>(layout));
+            }
+        } catch (std::exception& e) {
+            common::logger::warn("Failed to read VRUI properties in element '{}': {}", _name, e.what());
+        }
+
+        for (const auto& childElm : _childElements) {
+            childElm->readDevLayoutProperties(key + ".", propertiesMap);
         }
     }
 }

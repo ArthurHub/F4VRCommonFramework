@@ -9,8 +9,8 @@ namespace vrui
     class UIToggleGroupContainer : public UIContainer
     {
     public:
-        explicit UIToggleGroupContainer(const UIContainerLayout layout = UIContainerLayout::Manual, const float padding = 0) :
-            UIContainer(layout, padding) {}
+        explicit UIToggleGroupContainer(const std::string& name, const UIContainerLayout layout = UIContainerLayout::Manual, const float padding = 0) :
+            UIContainer(name, layout, padding) {}
 
         void addElement(const std::shared_ptr<UIToggleButton>& button);
 

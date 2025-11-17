@@ -3,6 +3,8 @@
 #include <format>
 #include <stdexcept>
 
+#include "common/Logger.h"
+
 namespace vrui
 {
     std::string UIElement::toString() const
@@ -70,6 +72,34 @@ namespace vrui
     {
         if (_parent) {
             _parent->onStateChanged(element);
+        }
+    }
+
+    /**
+     * Write the layout properties of the element to the given map.
+     * Used for development layout setting to be able to adjust the properties via config files at runtime.
+     */
+    void UIElement::writeDevLayoutProperties(const std::string& namePrefix, std::map<std::string, std::string>& propertiesMap) const
+    {
+        propertiesMap[namePrefix + _name] = std::format("Pos:({:.2f},{:.2f},{:.2f}), Scale:({:.2f}), Size:({:.2f},{:.2f})",
+            getPosition().x, getPosition().y, getPosition().z, getScale(), getSize().width, getSize().height);
+    }
+
+    /**
+     * Read the layout properties of the element to the given map.
+     * Used for development layout setting to be able to adjust the properties via config files at runtime.
+     */
+    void UIElement::readDevLayoutProperties(const std::string& namePrefix, const std::map<std::string, std::string>& propertiesMap)
+    {
+        try {
+            float x, y, z, scale, width, height;
+            if (std::sscanf(propertiesMap.at(namePrefix + _name).c_str(), "Pos:(%f,%f,%f), Scale:(%f), Size:(%f,%f)", &x, &y, &z, &scale, &width, &height) == 6) { // NOLINT(cert-err34-c)
+                setPosition(x, y, z);
+                setScale(scale);
+                setSize(width, height);
+            }
+        } catch (std::exception& e) {
+            common::logger::warn("Failed to read VRUI properties in element '{}': {}", _name, e.what());
         }
     }
 }

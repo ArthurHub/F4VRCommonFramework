@@ -17,7 +17,8 @@ namespace vrui
     class UIElement
     {
     public:
-        UIElement()
+        explicit UIElement(std::string name = "NoName") :
+            _name(std::move(name))
         {
             _transform.translate = RE::NiPoint3(0, 0, 0);
             _transform.rotate = common::getIdentityMatrix();
@@ -79,6 +80,12 @@ namespace vrui
         virtual void attachToNode(RE::NiNode* attachNode);
         virtual void detachFromAttachedNode(bool releaseSafe);
 
+        virtual void writeDevLayoutProperties(const std::string& namePrefix, std::map<std::string, std::string>& propertiesMap) const;
+        virtual void readDevLayoutProperties(const std::string& namePrefix, const std::map<std::string, std::string>& propertiesMap);
+
+        // friendly name used for debugging and dev-config-layout
+        std::string _name;
+
         UIElement* _parent = nullptr;
         RE::NiTransform _transform;
         bool _visible = true;
@@ -91,5 +98,6 @@ namespace vrui
 
         // Used to allow hiding attachToNode, detachFromAttachedNode from public API
         friend class UIManager;
+        friend class UIContainer;
     };
 }

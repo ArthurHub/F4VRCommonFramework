@@ -8,15 +8,17 @@ namespace vrui
     class UIWidget : public UIElement
     {
     public:
-        explicit UIWidget(const std::string& nifPath, const float scale = 1)
+        explicit UIWidget(const std::string& nifPath, const float scale = 1.0f)
         {
             auto [node, widthToHeightRatio] = getUINodeFromNifFile(nifPath);
             _node.reset(node);
             _size = getElementSize(widthToHeightRatio);
+            _name = node->name;
             setScale(scale);
         }
 
-        explicit UIWidget(RE::NiNode* node) :
+        explicit UIWidget(const std::string& name, RE::NiNode* node) :
+            UIElement(name),
             _node(node) {}
 
         virtual std::string toString() const override;

@@ -30,7 +30,8 @@ namespace vrui
     class UIContainer : public UIElement
     {
     public:
-        explicit UIContainer(const UIContainerLayout layout = UIContainerLayout::Manual, const float padding = 0, const float scale = 1) :
+        explicit UIContainer(const std::string& name, const UIContainerLayout layout = UIContainerLayout::Manual, const float padding = 0, const float scale = 1) :
+            UIElement(name),
             _layout(layout),
             _padding(padding)
         {
@@ -41,7 +42,7 @@ namespace vrui
         virtual void onLayoutUpdate(UIFrameUpdateContext* adapter) override;
         void addElement(const std::shared_ptr<UIElement>& element);
 
-        UIContainerLayout layout() const { return _layout; }
+        UIContainerLayout getLayout() const { return _layout; }
         void setLayout(const UIContainerLayout layout) { _layout = layout; }
         bool isHorizontalLayout() const;
 
@@ -64,6 +65,8 @@ namespace vrui
         void layoutVerticalUp() const;
         void layoutVerticalDown() const;
         float calcPadding() const { return _padding * calcScale(); }
+        virtual void writeDevLayoutProperties(const std::string& namePrefix, std::map<std::string, std::string>& propertiesMap) const override;
+        virtual void readDevLayoutProperties(const std::string& namePrefix, const std::map<std::string, std::string>& propertiesMap) override;
 
         // how to lay out the child elements
         UIContainerLayout _layout = UIContainerLayout::Manual;

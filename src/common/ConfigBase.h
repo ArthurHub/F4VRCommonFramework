@@ -4,6 +4,7 @@
 #include <fstream>
 #include <SimpleIni.h>
 #include <nlohmann/json.hpp>
+#include <ranges>
 #include <thomasmonkman-filewatch/FileWatch.hpp>
 
 #include "CommonUtils.h"
@@ -15,6 +16,7 @@ namespace common
 {
     static const auto BASE_PATH = getRelativePathInDocuments(R"(\My Games\Fallout4VR\Mods_Config)");
     constexpr auto INI_SECTION_DEBUG = "Debug";
+    constexpr auto INI_SECTION_VRUI = "VRUI_DevLayout";
 
     class ConfigBase
     {
@@ -36,6 +38,14 @@ namespace common
             loadIniConfig();
         }
 
+        /**
+         * Save the current in-memory config values to the INI file.
+         */
+        virtual void save()
+        {
+            saveIniConfig();
+        }
+
         // Can be used to test things at runtime during development
         // i.e. check "debugFlowFlag==1" somewhere in code and use config reload to change the value at runtime.
         float debugFlowFlag1 = 0;
@@ -43,6 +53,7 @@ namespace common
         float debugFlowFlag3 = 0;
         std::string debugFlowText1;
         std::string debugFlowText2;
+        std::map<std::string, std::string> debugVRUIProperties;
 
         /**
          * Check if debug data dump is requested for the given name.
@@ -116,6 +127,29 @@ namespace common
             return ini.GetLongValue(INI_SECTION_DEBUG, "iVersion", 0);
         }
 
+        void loadDebugSection(const CSimpleIniA& ini)
+        {
+            _iniConfigVersion = ini.GetLongValue(INI_SECTION_DEBUG, "iVersion", 0);
+            _logLevel = ini.GetLongValue(INI_SECTION_DEBUG, "iLogLevel", 2);
+            _logPattern = ini.GetValue(INI_SECTION_DEBUG, "sLogPattern", "%H:%M:%S.%e %L: %v");
+            debugFlowFlag1 = static_cast<float>(ini.GetDoubleValue(INI_SECTION_DEBUG, "fDebugFlowFlag1", 0));
+            debugFlowFlag2 = static_cast<float>(ini.GetDoubleValue(INI_SECTION_DEBUG, "fDebugFlowFlag2", 0));
+            debugFlowFlag3 = static_cast<float>(ini.GetDoubleValue(INI_SECTION_DEBUG, "fDebugFlowFlag3", 0));
+            debugFlowText1 = ini.GetValue(INI_SECTION_DEBUG, "sDebugFlowText1", "");
+            debugFlowText2 = ini.GetValue(INI_SECTION_DEBUG, "sDebugFlowText2", "");
+            _debugDumpDataOnceNames = ini.GetValue(INI_SECTION_DEBUG, "sDebugDumpDataOnceNames", "");
+        }
+
+        void loadVRUISection(const CSimpleIniA& ini)
+        {
+            const auto& vruiSection = ini.GetSection(INI_SECTION_VRUI);
+            if (vruiSection && !vruiSection->empty()) {
+                for (const auto& [entry, value] : *vruiSection) {
+                    debugVRUIProperties[entry.pItem] = value;
+                }
+            }
+        }
+
         /**
          * Load all the config values from INI config file, override all existing values in the instance.
          * This code should be safe to run multiple times as changes are loaded from disk.
@@ -129,21 +163,29 @@ namespace common
                 throw std::runtime_error("Failed to load INI config file! Error: " + std::to_string(rc));
             }
 
-            _iniConfigVersion = ini.GetLongValue(INI_SECTION_DEBUG, "iVersion", 0);
-            _logLevel = ini.GetLongValue(INI_SECTION_DEBUG, "iLogLevel", 2);
-            _logPattern = ini.GetValue(INI_SECTION_DEBUG, "sLogPattern", "%H:%M:%S.%e %L: %v");
-            debugFlowFlag1 = static_cast<float>(ini.GetDoubleValue(INI_SECTION_DEBUG, "fDebugFlowFlag1", 0));
-            debugFlowFlag2 = static_cast<float>(ini.GetDoubleValue(INI_SECTION_DEBUG, "fDebugFlowFlag2", 0));
-            debugFlowFlag3 = static_cast<float>(ini.GetDoubleValue(INI_SECTION_DEBUG, "fDebugFlowFlag3", 0));
-            debugFlowText1 = ini.GetValue(INI_SECTION_DEBUG, "sDebugFlowText1", "");
-            debugFlowText2 = ini.GetValue(INI_SECTION_DEBUG, "sDebugFlowText2", "");
-            _debugDumpDataOnceNames = ini.GetValue(INI_SECTION_DEBUG, "sDebugDumpDataOnceNames", "");
+            loadDebugSection(ini);
 
             // set log after loading from config
             logger::setLogLevelAndPattern(_logLevel, _logPattern);
 
+            loadVRUISection(ini);
+
             // let inherited class load all its values
             loadIniConfigInternal(ini);
+        }
+
+        /**
+         * Save or clear the VRUI dev layout section in the INI file depending on if we have VRUI properties.
+         */
+        void saveVRUIIniSection(CSimpleIniA& ini)
+        {
+            if (debugVRUIProperties.empty()) {
+                ini.Delete(INI_SECTION_VRUI, nullptr);
+            } else {
+                for (const auto& [entry,value] : debugVRUIProperties) {
+                    ini.SetValue(INI_SECTION_VRUI, entry.c_str(), value.c_str());
+                }
+            }
         }
 
         /**
@@ -161,6 +203,9 @@ namespace common
 
             // let inherited class save all its values
             saveIniConfigInternal(ini);
+
+            // handle VRUI section by either clearing it or writing all values
+            saveVRUIIniSection(ini);
 
             _ignoreNextIniFileChange.store(true);
             rc = ini.SaveFile(_iniFilePath.c_str());

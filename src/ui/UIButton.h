@@ -10,8 +10,8 @@ namespace vrui
         explicit UIButton(const std::string& nifPath) :
             UIWidget(nifPath) {}
 
-        explicit UIButton(RE::NiNode* node) :
-            UIWidget(node) {}
+        explicit UIButton(const std::string& name, RE::NiNode* node) :
+            UIWidget(name, node) {}
 
         void setOnPressHandler(std::function<void(UIWidget*)> handler)
         {

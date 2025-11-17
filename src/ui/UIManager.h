@@ -17,8 +17,10 @@ namespace vrui
         void attachPresetToPrimaryWandTop(const std::shared_ptr<UIElement>& element, float zOffset = 0);
         void attachPresetToPrimaryWandLeft(const std::shared_ptr<UIElement>& element, bool leftHanded, RE::NiPoint3 offset = { 0, 0, 0 });
         void attachPresetToHMDBottom(const std::shared_ptr<UIElement>& element);
+        void enableDevLayoutViaConfig() const;
 
     private:
+        void readDevLayoutFromConfig() const;
         void dumpUITree() const;
         static void dumpUITreeRecursive(UIElement* element, std::string padding);
 

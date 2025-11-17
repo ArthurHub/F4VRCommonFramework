@@ -1,7 +1,6 @@
 #include "UIManager.h"
 
 #include "ModBase.h"
-#include "../Debug.h"
 #include "../common/Logger.h"
 
 using namespace common;
@@ -16,13 +15,25 @@ namespace vrui
      */
     void UIManager::onFrameUpdate(UIModAdapter* adapter)
     {
+        const auto config = f4cf::g_mod->getConfig();
+
         if (!_releaseSafeList.empty()) {
             _releaseSafeList.clear();
             adapter->setInteractionHandPointing(false, false);
+
+            // remove dev layout properties if used
+            if (!config->debugVRUIProperties.empty()) {
+                config->debugVRUIProperties.clear();
+                config->save();
+            }
         }
 
         if (_rootElements.empty()) {
             return;
+        }
+
+        if (!config->debugVRUIProperties.empty()) {
+            readDevLayoutFromConfig();
         }
 
         UIFrameUpdateContext context(adapter);
@@ -41,7 +52,7 @@ namespace vrui
             adapter->setInteractionHandPointing(false, isInteractionClose.value());
         }
 
-        if (f4cf::g_mod->getConfig()->checkDebugDumpDataOnceFor("ui_tree")) {
+        if (config->checkDebugDumpDataOnceFor("ui_tree")) {
             dumpUITree();
         }
     }
@@ -84,6 +95,31 @@ namespace vrui
     {
         element->setPosition(0, 35, -40);
         attachElement(element, findNode("world_HMD_info.nif", getPlayerNodes()->UprightHmdNode));
+    }
+
+    /**
+     * Used during development to adjust VR UI layout and see the result live at runtime.
+     * Allows changing values like position, scale, padding, and layout in mod main ini file.
+     * The change in values is reloaded immediately and reflected in the rendered VR UI.
+     * The can them update the code with the new values played with at runtime.
+     */
+    void UIManager::enableDevLayoutViaConfig() const
+    {
+        f4cf::g_mod->getConfig()->debugVRUIProperties.clear();
+        for (const auto& rootElm : _rootElements) {
+            rootElm->writeDevLayoutProperties("", f4cf::g_mod->getConfig()->debugVRUIProperties);
+        }
+        f4cf::g_mod->getConfig()->save();
+    }
+
+    /**
+     * Used for development layout setting to be able to adjust the properties via config files at runtime.
+     */
+    void UIManager::readDevLayoutFromConfig() const
+    {
+        for (const auto& rootElm : _rootElements) {
+            rootElm->readDevLayoutProperties("", f4cf::g_mod->getConfig()->debugVRUIProperties);
+        }
     }
 
     /**

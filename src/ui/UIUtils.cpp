@@ -62,7 +62,7 @@ namespace vrui
         if (widthHeightRatio < 0) {
             common::logger::warn("UI node nif doesn't contain width-to-height ratio data! (Nif: {})", path.c_str());
         }
-        nifNode->name = RE::BSFixedString(path.c_str());
+        nifNode->name = RE::BSFixedString(std::filesystem::path(path).stem().string());
         return { nifNode, widthHeightRatio };
     }
 
