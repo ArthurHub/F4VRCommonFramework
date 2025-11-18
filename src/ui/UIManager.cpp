@@ -76,16 +76,16 @@ namespace vrui
     void UIManager::attachPresetToPrimaryWandTop(const std::shared_ptr<UIElement>& element, const float zOffset)
     {
         element->setPosition(0, 0, 5 + zOffset);
-        attachElement(element, getPlayerNodes()->primaryUIAttachNode);
+        attachElement(element, UIUtils::getPrimaryWandAttachNode());
     }
 
     /**
      * Attach the UI on left of the primary hand and bound to the hand movement.
      */
-    void UIManager::attachPresetToPrimaryWandLeft(const std::shared_ptr<UIElement>& element, const bool leftHanded, const RE::NiPoint3 offset)
+    void UIManager::attachPresetToPrimaryWandLeft(const std::shared_ptr<UIElement>& element, const RE::NiPoint3 offset)
     {
-        element->setPosition((leftHanded ? -1.f : 1.f) * (offset.x - 15), offset.y, offset.z - 5);
-        attachElement(element, getPlayerNodes()->primaryUIAttachNode);
+        element->setPosition((UIUtils::isLeftHandedMode() ? -1.f : 1.f) * (offset.x - 15), offset.y, offset.z - 5);
+        attachElement(element, UIUtils::getPrimaryWandAttachNode());
     }
 
     /**
@@ -94,7 +94,7 @@ namespace vrui
     void UIManager::attachPresetToHMDBottom(const std::shared_ptr<UIElement>& element)
     {
         element->setPosition(0, 35, -40);
-        attachElement(element, findNode("world_HMD_info.nif", getPlayerNodes()->UprightHmdNode));
+        attachElement(element, UIUtils::getHMDAttachNode());
     }
 
     /**

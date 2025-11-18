@@ -54,7 +54,7 @@ namespace vrui
         }
 
         const auto visible = calcVisibility();
-        setNodeVisibility(_node.get(), visible, getScale());
+        UIUtils::setNodeVisibility(_node.get(), visible, getScale());
         if (!visible) {
             return;
         }
@@ -152,7 +152,7 @@ namespace vrui
     {
         _pressYOffset = 0;
         _pressEventFired = true;
-        context->fireInteractionHeptic();
+        UIUtils::triggerInteractionHeptic();
         UIElement::onPressEventFired(element, context);
     }
 }

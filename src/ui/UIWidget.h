@@ -10,9 +10,9 @@ namespace vrui
     public:
         explicit UIWidget(const std::string& nifPath, const float scale = 1.0f)
         {
-            auto [node, widthToHeightRatio] = getUINodeFromNifFile(nifPath);
+            auto [node, widthToHeightRatio] = UIUtils::getUINodeFromNifFile(nifPath);
             _node.reset(node);
-            _size = getElementSize(widthToHeightRatio);
+            _size = UIUtils::getElementSize(widthToHeightRatio);
             _name = node->name;
             setScale(scale);
         }

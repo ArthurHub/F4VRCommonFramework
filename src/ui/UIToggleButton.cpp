@@ -55,7 +55,7 @@ namespace vrui
         }
 
         const bool visible = _isToggleOn && calcVisibility();
-        setNodeVisibility(_toggleFrameNode.get(), visible, getScale());
+        UIUtils::setNodeVisibility(_toggleFrameNode.get(), visible, getScale());
         if (visible) {
             _toggleFrameNode->local = _node->local;
         }

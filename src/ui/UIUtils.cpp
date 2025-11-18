@@ -1,6 +1,8 @@
 #include "UIUtils.h"
 
 #include "common/Logger.h"
+#include "f4vr/PlayerNodes.h"
+#include "f4vr/VRControllersManager.h"
 
 namespace
 {
@@ -25,19 +27,52 @@ namespace
 namespace vrui
 {
     /**
-     * Get struct with useful RE::NiNodes references related to player.
+     * Get the size of a UI element based on its width-to-height ratio.
+     * The way VR UI nifs are defined is that the height is always 2.0f units and the width is
+     * the only one that changes if the shape is not square.
+     * The reason height is 2.0f and not 1.0f is to easily make the center of the UI element at (0,0,0)
      */
-    f4vr::PlayerNodes* getPlayerNodes()
+    UISize UIUtils::getElementSize(const float widthToHeightRatio)
     {
-        const auto player = RE::PlayerCharacter::GetSingleton();
-        auto* nodes = reinterpret_cast<f4vr::PlayerNodes*>(reinterpret_cast<std::uintptr_t>(player) + 0x6E0);
-        return nodes;
+        return UISize(2.0f * widthToHeightRatio, 2.0f);
+    }
+
+    /**
+     * Get node of the primary hand wand to attach UI to.
+     */
+    RE::NiNode* UIUtils::getPrimaryWandAttachNode()
+    {
+        return f4vr::getPlayerNodes()->primaryUIAttachNode;
+    }
+
+    /**
+     * Get node of the HMD to attach UI to.
+     */
+    RE::NiNode* UIUtils::getHMDAttachNode()
+    {
+        return findNode(f4vr::getPlayerNodes()->UprightHmdNode, "world_HMD_info.nif");
+    }
+
+    /**
+     * Is the game played left-handed.
+     */
+    bool UIUtils::isLeftHandedMode()
+    {
+        return f4vr::isLeftHandedMode();
+    }
+
+    /**
+     * Trigger haptic on the offhand to indicate interaction with the VR UI.
+     */
+    void UIUtils::triggerInteractionHeptic()
+    {
+        f4vr::VRControllers.triggerHaptic(f4vr::Hand::Offhand);
     }
 
     /**
      * Update the node flags to show/hide it.
      */
-    void setNodeVisibility(RE::NiNode* node, const bool visible, const float originalScale)
+    void UIUtils::setNodeVisibility(RE::NiNode* node, const bool visible, const float originalScale)
     {
         node->local.scale = visible ? originalScale : 0;
 
@@ -54,7 +89,7 @@ namespace vrui
      * Get a RE::NiNode that can be used in game UI for the given .nif file.
      * Why is just loading not enough?
      */
-    std::tuple<RE::NiNode*, float> getUINodeFromNifFile(const std::string& path)
+    std::tuple<RE::NiNode*, float> UIUtils::getUINodeFromNifFile(const std::string& path)
     {
         auto& normPath = path._Starts_with("Data") ? path : "Data/Meshes/" + path;
         const auto nifNode = f4vr::getClonedNiNodeForNifFile(normPath);
@@ -69,25 +104,8 @@ namespace vrui
     /**
      * Find node by name in the given subtree of the given root node.
      */
-    RE::NiNode* findNode(const char* nodeName, RE::NiNode* node)
+    RE::NiNode* UIUtils::findNode(RE::NiNode* node, const char* nodeName)
     {
-        if (!node) {
-            return nullptr;
-        }
-
-        if (_stricmp(nodeName, node->name.c_str()) == 0) {
-            return node;
-        }
-
-        for (const auto& child : node->children) {
-            if (child) {
-                if (const auto childNiNode = child->IsNode()) {
-                    if (const auto result = findNode(nodeName, childNiNode)) {
-                        return result;
-                    }
-                }
-            }
-        }
-        return nullptr;
+        return f4vr::findNode(node, nodeName);
     }
 }

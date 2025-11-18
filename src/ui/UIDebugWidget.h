@@ -8,7 +8,7 @@ namespace vrui
     {
     public:
         explicit UIDebugWidget(const bool followInteractPos = false) :
-            UIWidget(getDebugSphereNifName())
+            UIWidget(UIUtils::getDebugSphereNifName())
         {
             _followInteractionPosition = followInteractPos;
         }

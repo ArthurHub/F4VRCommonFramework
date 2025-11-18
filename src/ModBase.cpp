@@ -6,6 +6,7 @@
 #include "Debug.h"
 #include "MainLoopHook.h"
 #include "common/Logger.h"
+#include "f4vr/PlayerNodes.h"
 #include "f4vr/VRControllersManager.h"
 #include "ui/UIManager.h"
 

@@ -15,7 +15,7 @@ namespace vrui
         void detachElement(const std::shared_ptr<UIElement>& element, bool releaseSafe);
 
         void attachPresetToPrimaryWandTop(const std::shared_ptr<UIElement>& element, float zOffset = 0);
-        void attachPresetToPrimaryWandLeft(const std::shared_ptr<UIElement>& element, bool leftHanded, RE::NiPoint3 offset = { 0, 0, 0 });
+        void attachPresetToPrimaryWandLeft(const std::shared_ptr<UIElement>& element, RE::NiPoint3 offset = { 0, 0, 0 });
         void attachPresetToHMDBottom(const std::shared_ptr<UIElement>& element);
         void enableDevLayoutViaConfig() const;
 

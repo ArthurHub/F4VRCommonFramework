@@ -10,7 +10,7 @@ namespace vrui
         explicit UIToggleButton(const std::string& nifPath) :
             UIWidget(nifPath)
         {
-            auto [frameNode, widthToHeightRatio] = getUINodeFromNifFile(getToggleButtonFrameNifName());
+            auto [frameNode, widthToHeightRatio] = UIUtils::getUINodeFromNifFile(UIUtils::getToggleButtonFrameNifName());
             _toggleFrameNode.reset(frameNode);
         }
 
