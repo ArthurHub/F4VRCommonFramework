@@ -8,7 +8,7 @@ namespace vrui
     std::string UIToggleButton::toString() const
     {
         return std::format("UIToggleButton({}): {}{}{}, Pos({:.2f}, {:.2f}, {:.2f}), Size({:.2f}, {:.2f})",
-            _node->name.c_str(),
+            _name,
             _visible ? "V" : "H",
             isPressable() ? "P" : ".",
             _isToggleOn ? "T" : ".",

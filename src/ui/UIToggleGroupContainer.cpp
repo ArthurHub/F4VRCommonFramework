@@ -8,7 +8,8 @@ namespace vrui
 {
     std::string UIToggleGroupContainer::toString() const
     {
-        return std::format("UIToggleGroupContainer: {}, Pos({:.2f}, {:.2f}, {:.2f}), Size({:.2f}, {:.2f}), Children({}), Layout({})",
+        return std::format("UIToggleGroupContainer({}): {}, Pos({:.2f}, {:.2f}, {:.2f}), Size({:.2f}, {:.2f}), Children({}), Layout({})",
+            _name,
             _visible ? "V" : "H",
             _transform.translate.x,
             _transform.translate.y,

@@ -9,7 +9,8 @@ namespace vrui
 {
     std::string UIElement::toString() const
     {
-        return std::format("UIElement: {}, Pos({:.2f}, {:.2f}, {:.2f}), Size({:.2f}, {:.2f})",
+        return std::format("UIElement({}): {}, Pos({:.2f}, {:.2f}, {:.2f}), Size({:.2f}, {:.2f})",
+            _name,
             _visible ? "V" : "H",
             _transform.translate.x,
             _transform.translate.y,
