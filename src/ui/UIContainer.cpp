@@ -10,7 +10,8 @@ namespace vrui
 {
     std::string UIContainer::toString() const
     {
-        return std::format("UIContainer({}): {}, Pos({:.2f}, {:.2f}, {:.2f}), Size({:.2f}, {:.2f}), Children({}), Layout({})",
+        const auto calculatedSize = calcSize();
+        return std::format("UIContainer({}): {}, Pos({:.2f}, {:.2f}, {:.2f}), Size({:.2f}, {:.2f}), CalcSize({:.2f}, {:.2f}), Children({}), Layout({})",
             _name,
             _visible ? "V" : "H",
             _transform.translate.x,
@@ -18,6 +19,8 @@ namespace vrui
             _transform.translate.z,
             _size.width,
             _size.height,
+            calculatedSize.width,
+            calculatedSize.height,
             _childElements.size(),
             static_cast<int>(_layout)
             );
@@ -285,6 +288,10 @@ namespace vrui
     void UIContainer::readDevLayoutProperties(const std::string& namePrefix, const std::map<std::string, std::string>& propertiesMap)
     {
         const auto key = namePrefix + _name;
+        if (!propertiesMap.contains(key)) {
+            return;
+        }
+
         try {
             float x, y, z, scale, padding;
             int layout;

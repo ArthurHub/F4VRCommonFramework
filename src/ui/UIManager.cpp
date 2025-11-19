@@ -65,7 +65,7 @@ namespace vrui
         element->attachToNode(attachNode);
         // only the root can exists in the manager collection
         if (!element->getParent()) {
-            logger::info("UI Manager root element added and attached to '{}'", attachNode->name.c_str());
+            logger::info("UI Manager root element '{}' added and attached to '{}'", element->_name, attachNode->name.c_str());
             _rootElements.emplace_back(element);
         }
     }
@@ -140,7 +140,7 @@ namespace vrui
                 if (releaseSafe) {
                     _releaseSafeList.push_back(*it);
                 }
-                logger::info("UI Manager root element removed (ReleaseSafe: {})", releaseSafe);
+                logger::info("UI Manager root element '{}' removed (ReleaseSafe: {})", element->_name, releaseSafe);
                 _rootElements.erase(it);
                 break;
             }

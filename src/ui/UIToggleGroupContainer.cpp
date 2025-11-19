@@ -8,7 +8,8 @@ namespace vrui
 {
     std::string UIToggleGroupContainer::toString() const
     {
-        return std::format("UIToggleGroupContainer({}): {}, Pos({:.2f}, {:.2f}, {:.2f}), Size({:.2f}, {:.2f}), Children({}), Layout({})",
+        const auto calculatedSize = calcSize();
+        return std::format("UIToggleGroupContainer({}): {}, Pos({:.2f}, {:.2f}, {:.2f}), Size({:.2f}, {:.2f}), CalcSize({:.2f}, {:.2f}), Children({}), Layout({})",
             _name,
             _visible ? "V" : "H",
             _transform.translate.x,
@@ -16,6 +17,8 @@ namespace vrui
             _transform.translate.z,
             _size.width,
             _size.height,
+            calculatedSize.width,
+            calculatedSize.height,
             _childElements.size(),
             static_cast<int>(_layout)
             );

@@ -530,6 +530,10 @@ namespace f4vr
         uint64_t flags[2] = { 0x0, 0xed };
         uint64_t mem = 0;
         auto& normPath = path._Starts_with("Data") ? path : "Data/Meshes/" + path;
+        if (!std::filesystem::exists(normPath)) {
+            throw std::runtime_error("Load nif file failed, file not found: " + normPath);
+        }
+
         loadNif((uint64_t)normPath.c_str(), (uint64_t)&mem, (uint64_t)&flags);
         return reinterpret_cast<RE::NiNode*>(mem);
     }
@@ -540,7 +544,11 @@ namespace f4vr
      */
     RE::NiNode* getClonedNiNodeForNifFile(const std::string& path)
     {
-        const RE::NiNode* nifNode = loadNifFromFile(path);
+        const auto nifNode = loadNifFromFile(path);
+        if (!nifNode) {
+            throw std::runtime_error("Load nif file failed, nullptr returned for: " + path);
+        }
+
         NiCloneProcess proc;
         proc.unk18 = reinterpret_cast<uint64_t*>(cloneAddr1.address());
         proc.unk48 = reinterpret_cast<uint64_t*>(cloneAddr2.address());

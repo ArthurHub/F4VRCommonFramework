@@ -37,6 +37,23 @@ namespace common
     constexpr auto INI_SECTION_VRUI = "VRUI_DevLayout";
 
     /**
+     * Load the embedded ini with default values and not the on-disk file.
+     */
+    void ConfigBase::loadEmbeddedDefaultOnly()
+    {
+        CSimpleIniA ini;
+        const SI_Error rc = ini.LoadData(getEmbededResourceAsString(_module, _iniDefaultConfigEmbeddedResourceId));
+        if (rc < 0) {
+            logger::warn("Failed to load INI config file! Error:", rc);
+            throw std::runtime_error("Failed to load INI config file! Error: " + std::to_string(rc));
+        }
+
+        loadDebugSection(ini);
+        loadVRUISection(ini);
+        loadIniConfigInternal(ini);
+    }
+
+    /**
      * Check if debug data dump is requested for the given name.
      * If matched, the name will be removed from the list to prevent multiple dumps.
      * Also saved into INI to prevent reloading the same dump name on next config reload.

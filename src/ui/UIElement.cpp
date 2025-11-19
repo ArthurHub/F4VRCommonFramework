@@ -92,9 +92,13 @@ namespace vrui
      */
     void UIElement::readDevLayoutProperties(const std::string& namePrefix, const std::map<std::string, std::string>& propertiesMap)
     {
+        const auto key = namePrefix + _name;
+        if (!propertiesMap.contains(key)) {
+            return;
+        }
         try {
             float x, y, z, scale, width, height;
-            if (std::sscanf(propertiesMap.at(namePrefix + _name).c_str(), "Pos:(%f,%f,%f), Scale:(%f), Size:(%f,%f)", &x, &y, &z, &scale, &width, &height) == 6) { // NOLINT(cert-err34-c)
+            if (std::sscanf(propertiesMap.at(key).c_str(), "Pos:(%f,%f,%f), Scale:(%f), Size:(%f,%f)", &x, &y, &z, &scale, &width, &height) == 6) { // NOLINT(cert-err34-c)
                 setPosition(x, y, z);
                 setScale(scale);
                 setSize(width, height);

@@ -39,6 +39,8 @@ namespace common
             saveIniConfig();
         }
 
+        void loadEmbeddedDefaultOnly();
+
         bool checkDebugDumpDataOnceFor(const char* name);
 
         // Can be used to test things at runtime during development
