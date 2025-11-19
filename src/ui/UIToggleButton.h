@@ -27,7 +27,7 @@ namespace vrui
         bool isUnToggleAllowed() const { return _isUnToggleAllowed; }
         void setUnToggleAllowed(const bool allowUnToggle) { _isUnToggleAllowed = allowUnToggle; }
 
-        void setOnToggleHandler(std::function<void(UIWidget*, bool)> handler)
+        void setOnToggleHandler(std::function<void(UIToggleButton*, bool)> handler)
         {
             _onToggleEventHandler = std::move(handler);
         }

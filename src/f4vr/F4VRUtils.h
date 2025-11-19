@@ -44,7 +44,7 @@ namespace f4vr
     RE::NiNode* find1StChildNode(RE::NiAVObject* node, const char* name);
 
     // visibility
-    bool isNodeVisible(const RE::NiNode* node);
+    bool isNodeVisible(const RE::NiAVObject* node);
     void setNodeVisibility(RE::NiAVObject* node, bool show);
     void setNodeVisibilityDeep(RE::NiAVObject* node, bool show, bool updateSelf = true);
 

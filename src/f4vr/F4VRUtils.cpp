@@ -362,7 +362,7 @@ namespace f4vr
     /**
      * Return true if the node is visible, false if it is hidden or null.
      */
-    bool isNodeVisible(const RE::NiNode* node) { return node && !(node->flags.flags & 0x1); }
+    bool isNodeVisible(const RE::NiAVObject* node) { return node && !(node->flags.flags & 0x1); }
 
     /**
      * Change flags to show or hide a node
