@@ -6,9 +6,9 @@ namespace vrui
 {
     struct UIUtils
     {
-        static std::string getDebugSphereNifName() { return "FRIK/1x1Sphere.nif"; }
-        static std::string getEmptyButtonFrameNifName() { return "FRIK/ui_common_btn_empty.nif"; }
-        static std::string getToggleButtonFrameNifName() { return "FRIK/ui_common_btn_border.nif"; }
+        static std::string getDebugSphereNifName() { return "FRIK\\1x1Sphere.nif"; }
+        static std::string getEmptyButtonFrameNifName() { return "FRIK\\UI_Common\\btn_empty.nif"; }
+        static std::string getToggleButtonFrameNifName() { return "FRIK\\UI_Common\\btn_border.nif"; }
 
         static UISize getElementSize(float widthToHeightRatio);
 
