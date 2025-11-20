@@ -14,6 +14,8 @@ namespace vrui
 
         void addElement(const std::shared_ptr<UIToggleButton>& button);
 
+        void clearToggleState() const;
+
         virtual std::string toString() const override;
 
     protected:

@@ -19,8 +19,10 @@ namespace vrui
 
         void setToggleState(const bool isToggleOn)
         {
-            _isToggleOn = isToggleOn;
-            onStateChanged(this);
+            if (_isToggleOn != isToggleOn) {
+                _isToggleOn = isToggleOn;
+                onStateChanged(this);
+            }
         }
 
         // is a user is allowed to un-toggle the button (useful for toggle group)

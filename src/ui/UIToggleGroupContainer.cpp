@@ -51,4 +51,15 @@ namespace vrui
         button->setUnToggleAllowed(false);
         UIContainer::addElement(button);
     }
+
+    /**
+     * Make no button in the container have toggle on state
+     */
+    void UIToggleGroupContainer::clearToggleState() const
+    {
+        for (const auto& element : _childElements) {
+            const auto toggleButton = dynamic_cast<UIToggleButton*>(element.get());
+            toggleButton->setToggleState(false);
+        }
+    }
 }

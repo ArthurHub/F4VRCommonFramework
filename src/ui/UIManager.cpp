@@ -73,9 +73,9 @@ namespace vrui
     /**
      * Attach the UI on top of the primary hand and bound to the hand movement.
      */
-    void UIManager::attachPresetToPrimaryWandTop(const std::shared_ptr<UIElement>& element, const float zOffset)
+    void UIManager::attachPresetToPrimaryWandTop(const std::shared_ptr<UIElement>& element, const RE::NiPoint3 offset)
     {
-        element->setPosition(0, 0, 5 + zOffset);
+        element->setPosition(offset.x, offset.y, offset.z);
         attachElement(element, UIUtils::getPrimaryWandAttachNode());
     }
 
@@ -84,7 +84,7 @@ namespace vrui
      */
     void UIManager::attachPresetToPrimaryWandLeft(const std::shared_ptr<UIElement>& element, const RE::NiPoint3 offset)
     {
-        element->setPosition((UIUtils::isLeftHandedMode() ? -1.f : 1.f) * (offset.x - 15), offset.y, offset.z - 5);
+        element->setPosition((UIUtils::isLeftHandedMode() ? -1.f : 1.f) * offset.x, offset.y, offset.z);
         attachElement(element, UIUtils::getPrimaryWandAttachNode());
     }
 
