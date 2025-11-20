@@ -53,7 +53,7 @@ namespace common::logger::internal
     /**
      * Current global log pattern
      */
-    inline std::string _logPattern = "%H:%M:%S.%e %L: %v";
+    inline std::string _logPattern = "%H:%M:%S.%e %l: %v";
 
     /**
      * Holds the last time of a log message per key.
