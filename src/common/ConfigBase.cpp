@@ -361,7 +361,7 @@ namespace common
     {
         std::unordered_map<std::string, RE::NiTransform> offsets;
         for (WORD resourceId = fromResourceId; resourceId <= toResourceId; resourceId++) {
-            auto resourceOpt = common::getEmbeddedResourceAsStringIfExists(resourceId);
+            auto resourceOpt = getEmbeddedResourceAsStringIfExists(resourceId);
             if (resourceOpt.has_value()) {
                 json json = json::parse(resourceOpt.value());
                 loadOffsetJsonToMap(json, offsets);
@@ -420,7 +420,7 @@ namespace common
      */
     void ConfigBase::saveOffsetsToJsonFile(const std::string& name, const RE::NiTransform& transform, const std::string& file)
     {
-        common::logger::info("Saving offsets '{}' to '{}'", name.c_str(), file.c_str());
+        logger::info("Saving offsets '{}' to '{}'", name.c_str(), file.c_str());
         json offsetJson;
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 4; j++) {
@@ -435,7 +435,7 @@ namespace common
         std::ofstream outF;
         outF.open(file, std::ios::out);
         if (outF.fail()) {
-            common::logger::info("cannot open '{}' for writing", file.c_str());
+            logger::info("cannot open '{}' for writing", file.c_str());
             return;
         }
         try {
@@ -443,7 +443,7 @@ namespace common
             outF.close();
         } catch (std::exception& e) {
             outF.close();
-            common::logger::warn("Unable to save json '{}': {}", file.c_str(), e.what());
+            logger::warn("Unable to save json '{}': {}", file.c_str(), e.what());
         }
     }
 

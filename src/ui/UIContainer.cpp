@@ -4,7 +4,7 @@
 
 #include "UIManager.h"
 #include "common/CommonUtils.h"
-#include "common/Logger.h"
+
 
 namespace vrui
 {
@@ -302,7 +302,7 @@ namespace vrui
                 setLayout(static_cast<UIContainerLayout>(layout));
             }
         } catch (std::exception& e) {
-            common::logger::warn("Failed to read VRUI properties in element '{}': {}", _name, e.what());
+            logger::warn("Failed to read VRUI properties in element '{}': {}", _name, e.what());
         }
 
         for (const auto& childElm : _childElements) {

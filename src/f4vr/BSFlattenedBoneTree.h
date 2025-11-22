@@ -15,7 +15,7 @@ namespace f4vr
             short parPos;
             short childPos;
             uint32_t unk8c;
-            RE::NiNode* refNode;
+            NiNode* refNode;
             RE::BSFixedString name;
             uint64_t unk98;
         };
@@ -34,13 +34,13 @@ namespace f4vr
             return BSFlattenedBoneTree_GetBoneIndex(this, nameStr);
         }
 
-        RE::NiNode* GetBoneNode(const std::string& a_name)
+        NiNode* GetBoneNode(const std::string& a_name)
         {
             auto nameStr = new RE::BSFixedString(a_name.c_str());
             return BSFlattenedBoneTree_GetBoneNode(this, nameStr);
         }
 
-        RE::NiNode* GetBoneNode(const int a_pos)
+        NiNode* GetBoneNode(const int a_pos)
         {
             return BSFlattenedBoneTree_GetBoneNodeFromPos(this, a_pos);
         }

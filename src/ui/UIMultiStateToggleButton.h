@@ -10,8 +10,6 @@
 #include <string>
 #include <utility>
 
-#include "common/Logger.h"
-
 namespace vrui
 {
     template <class StateT>
@@ -82,9 +80,7 @@ namespace vrui
     void UIMultiStateToggleButton<StateT>::setState(const StateT& state)
     {
         if (!_stateToNodeMap.contains(state)) {
-            common::logger::warn(
-                "Attempt to set multi state toggle button '{}' to invalid state",
-                _name);
+            logger::warn("Attempt to set multi state toggle button '{}' to invalid state", _name);
             return;
         }
 

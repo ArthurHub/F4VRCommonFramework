@@ -3,8 +3,6 @@
 #include <format>
 #include <stdexcept>
 
-#include "common/Logger.h"
-
 namespace vrui
 {
     std::string UIElement::toString() const
@@ -104,7 +102,7 @@ namespace vrui
                 setSize(width, height);
             }
         } catch (std::exception& e) {
-            common::logger::warn("Failed to read VRUI properties in element '{}': {}", _name, e.what());
+            logger::warn("Failed to read VRUI properties in element '{}': {}", _name, e.what());
         }
     }
 }

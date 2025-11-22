@@ -3,8 +3,6 @@
 #include <algorithm>
 #include <unordered_map>
 
-#include "../common/Logger.h"
-
 // Adopted from Shizof mod with permission, Thanks Shizof!!
 
 namespace f4vr
@@ -23,7 +21,7 @@ namespace f4vr
 
             const auto ui = RE::UI::GetSingleton();
             if (!ui) {
-                common::logger::error("Failed to init GameMenusHandler: UI is not initialized!");
+                logger::error("Failed to init GameMenusHandler: UI is not initialized!");
                 return;
             }
 
@@ -72,9 +70,9 @@ namespace f4vr
 
         void debugDumpAllMenus() const
         {
-            common::logger::info("Current game menu state:");
+            logger::info("Current game menu state:");
             for (const auto& [menuName, isOpen] : _gameMenuState) {
-                common::logger::info("{}: {}", menuName.c_str(), isOpen ? "Open" : "Closed");
+                logger::info("{}: {}", menuName.c_str(), isOpen ? "Open" : "Closed");
             }
         }
 
@@ -90,16 +88,16 @@ namespace f4vr
         virtual RE::BSEventNotifyControl ProcessEvent(const RE::MenuOpenCloseEvent& a_event, RE::BSTEventSource<RE::MenuOpenCloseEvent>*) override
         {
             if (!a_event.menuName.c_str()) {
-                common::logger::warn("ProcessEvent: menuName is null");
+                logger::warn("ProcessEvent: menuName is null");
                 return RE::BSEventNotifyControl::kContinue;
             }
 
             const auto& menuName = a_event.menuName.c_str();
             if (a_event.opening) {
-                common::logger::debug("Game menu '{}' opened", menuName);
+                logger::debug("Game menu '{}' opened", menuName);
                 _gameMenuState.insert_or_assign(menuName, true);
             } else {
-                common::logger::debug("Game menu '{}' closed", menuName);
+                logger::debug("Game menu '{}' closed", menuName);
                 _gameMenuState.insert_or_assign(menuName, false);
             }
 

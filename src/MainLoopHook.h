@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ModBase.h"
-#include "common/Logger.h"
+
 
 namespace f4cf::main_hook
 {
@@ -39,12 +39,12 @@ namespace f4cf::main_hook
      */
     inline void hook()
     {
-        common::logger::info("Hook into main loop at (0x{:X})...", internal::_hookFuncCallSite.address());
+        logger::info("Hook into main loop at (0x{:X})...", internal::_hookFuncCallSite.address());
         auto& trampoline = F4SE::GetTrampoline();
         const auto hookFuncOriginal = trampoline.write_call<5>(internal::_hookFuncCallSite.address(), &internal::onGameFrameUpdateHook);
 
         internal::_hookFuncThisHook = internal::getCallTarget(internal::_hookFuncCallSite.address());
-        common::logger::info("Hook into main loop successful, original: (0x{:X}), new: (0x{:X})", hookFuncOriginal, internal::_hookFuncThisHook);
+        logger::info("Hook into main loop successful, original: (0x{:X}), new: (0x{:X})", hookFuncOriginal, internal::_hookFuncThisHook);
         internal::_hookFuncOriginal = reinterpret_cast<internal::HookFunc>(hookFuncOriginal); // NOLINT(performance-no-int-to-ptr)
     }
 
@@ -57,7 +57,7 @@ namespace f4cf::main_hook
     {
         const auto current = internal::getCallTarget(internal::_hookFuncCallSite.address());
         if (current != internal::_hookFuncThisHook) {
-            common::logger::warn("Main Loop Hook validation failed! Expected: (0x{:X}), Current: (0x{:X})", internal::_hookFuncThisHook, current);
+            logger::warn("Main Loop Hook validation failed! Expected: (0x{:X}), Current: (0x{:X})", internal::_hookFuncThisHook, current);
         }
     }
 }

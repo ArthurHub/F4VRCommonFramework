@@ -1,7 +1,6 @@
 #include "UIManager.h"
 
 #include "ModBase.h"
-#include "../common/Logger.h"
 
 using namespace common;
 
@@ -15,7 +14,7 @@ namespace vrui
      */
     void UIManager::onFrameUpdate(UIModAdapter* adapter)
     {
-        const auto config = f4cf::g_mod->getConfig();
+        const auto config = g_mod->getConfig();
 
         if (!_releaseSafeList.empty()) {
             _releaseSafeList.clear();
@@ -105,11 +104,11 @@ namespace vrui
      */
     void UIManager::enableDevLayoutViaConfig() const
     {
-        f4cf::g_mod->getConfig()->debugVRUIProperties.clear();
+        g_mod->getConfig()->debugVRUIProperties.clear();
         for (const auto& rootElm : _rootElements) {
-            rootElm->writeDevLayoutProperties("", f4cf::g_mod->getConfig()->debugVRUIProperties);
+            rootElm->writeDevLayoutProperties("", g_mod->getConfig()->debugVRUIProperties);
         }
-        f4cf::g_mod->getConfig()->save();
+        g_mod->getConfig()->save();
     }
 
     /**
@@ -118,7 +117,7 @@ namespace vrui
     void UIManager::readDevLayoutFromConfig() const
     {
         for (const auto& rootElm : _rootElements) {
-            rootElm->readDevLayoutProperties("", f4cf::g_mod->getConfig()->debugVRUIProperties);
+            rootElm->readDevLayoutProperties("", g_mod->getConfig()->debugVRUIProperties);
         }
     }
 

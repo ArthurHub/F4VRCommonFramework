@@ -29,7 +29,7 @@ namespace fs = std::filesystem;
     template <class... Args>                                                                                                                          \
     log_func(spdlog::format_string_t<Args...>, Args&&...) -> log_func<Args...>;
 
-namespace common::logger::internal
+namespace f4cf::logger::internal
 {
     class HybridFormatter;
 
@@ -110,7 +110,7 @@ namespace common::logger::internal
     };
 }
 
-namespace common::logger
+namespace f4cf::logger
 {
     MAKE_SOURCE_LOGGER(trace, trace);
     MAKE_SOURCE_LOGGER(debug, debug);

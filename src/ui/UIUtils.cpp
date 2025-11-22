@@ -1,6 +1,5 @@
 #include "UIUtils.h"
 
-#include "common/Logger.h"
 #include "f4vr/PlayerNodes.h"
 #include "f4vr/VRControllersManager.h"
 
@@ -95,7 +94,7 @@ namespace vrui
         const auto nifNode = f4vr::getClonedNiNodeForNifFile(normPath);
         const float widthHeightRatio = extractWidthToHeightValueFronName(nifNode->name.c_str());
         if (widthHeightRatio < 0) {
-            common::logger::warn("UI node nif doesn't contain width-to-height ratio data! (Nif: {})", path.c_str());
+            logger::warn("UI node nif doesn't contain width-to-height ratio data! (Nif: {})", path.c_str());
         }
         nifNode->name = RE::BSFixedString(std::filesystem::path(path).stem().string());
         return { nifNode, widthHeightRatio };

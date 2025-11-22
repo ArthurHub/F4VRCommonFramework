@@ -115,7 +115,7 @@ namespace F4SEVR
 
         VMIdentifier* ident = nullptr;
         if (!vm->GetObjectIdentifier(scriptHandle, scriptName.c_str(), 0, &ident, 0)) {
-            common::logger::error("Failed to get script identifier for '{}' ({})", scriptName.c_str(), scriptHandle);
+            logger::error("Failed to get script identifier for '{}' ({})", scriptName.c_str(), scriptHandle);
             return;
         }
 

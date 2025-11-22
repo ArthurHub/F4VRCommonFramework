@@ -1,6 +1,5 @@
 #pragma once
 
-#include "common/Logger.h"
 #include "f4sevr/PapyrusArgs.h"
 #include "f4sevr/PapyrusNativeFunctions.h"
 #include "f4sevr/PapyrusUtils.h"
@@ -45,11 +44,11 @@ namespace f4vr
             if (scriptObj && _instance) {
                 const auto scriptName = scriptObj->GetObjectType();
                 uint64_t scriptHandle = scriptObj->GetHandle();
-                common::logger::info("Register for Papyrus gateway by Script:'{}' Handle:({})", scriptName.c_str(), scriptHandle);
+                logger::info("Register for Papyrus gateway by Script:'{}' Handle:({})", scriptName.c_str(), scriptHandle);
                 _instance->_scriptHandle = scriptHandle;
                 _instance->_scriptName = scriptName.c_str();
             } else {
-                common::logger::error("Papyrus Gateway instance is not set or scriptObj is null");
+                logger::error("Papyrus Gateway instance is not set or scriptObj is null");
             }
         }
 
@@ -68,11 +67,11 @@ namespace f4vr
         void executePapyrusScript(const char* functionName, F4SEVR::VMArray<F4SEVR::VMVariable>& arguments) const
         {
             if (_scriptHandle == 0) {
-                common::logger::error("No registered gateway script handle found, Papyrus script missing?");
+                logger::error("No registered gateway script handle found, Papyrus script missing?");
                 return;
             }
 
-            common::logger::debug("Calling papyrus function '{}' on script '{}'", functionName, _scriptName.c_str());
+            logger::debug("Calling papyrus function '{}' on script '{}'", functionName, _scriptName.c_str());
             F4SEVR::execPapyrusFunction(_scriptHandle, _scriptName, functionName, arguments);
         }
 

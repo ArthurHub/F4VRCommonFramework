@@ -8,13 +8,13 @@ namespace f4vr
 {
     void showMessagebox(const std::string& text)
     {
-        common::logger::info("Show messagebox: '{}'", text.c_str());
+        logger::info("Show messagebox: '{}'", text.c_str());
         F4SEVR::execPapyrusGlobalFunction("Debug", "Messagebox", text);
     }
 
     void showNotification(const std::string& text)
     {
-        common::logger::info("Show notification: '{}'", text.c_str());
+        logger::info("Show notification: '{}'", text.c_str());
         F4SEVR::execPapyrusGlobalFunction("Debug", "Notification", text);
     }
 
@@ -236,11 +236,11 @@ namespace f4vr
         }
 
         if (!addNew) {
-            common::logger::warn("Setting '{}' not found in INI settings", name);
+            logger::warn("Setting '{}' not found in INI settings", name);
             return nullptr;
         }
 
-        common::logger::warn("Setting '{}' not found in INI settings, adding new", name);
+        logger::warn("Setting '{}' not found in INI settings, adding new", name);
         RE::Setting newSetting("", 0);
         collection->Add(&newSetting);
         return collection->GetSetting(name);

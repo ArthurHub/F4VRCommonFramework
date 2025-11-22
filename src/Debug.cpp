@@ -1,6 +1,6 @@
 #include "Debug.h"
 
-#include "common/Logger.h"
+#include "Logger.h"
 #include "f4vr/PlayerNodes.h"
 
 using namespace common;

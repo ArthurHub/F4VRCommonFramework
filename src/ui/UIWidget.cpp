@@ -1,6 +1,5 @@
 #include "UIWidget.h"
 
-#include "../common/Logger.h"
 #include "common/MatrixUtils.h"
 
 using namespace common;

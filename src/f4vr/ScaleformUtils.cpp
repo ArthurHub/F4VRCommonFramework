@@ -1,7 +1,6 @@
 #include <stdexcept>
 
 #include "scaleformUtils.h"
-#include "../common/Logger.h"
 
 using namespace RE::Scaleform;
 
@@ -19,11 +18,11 @@ namespace
         switch (op) {
         case f4vr::ScaleformListOp::MoveUp:
             success = list->Invoke("moveSelectionUp", nullptr, nullptr, 0);
-            common::logger::debug("Move selection up on list:('{}'), success:({})", listPath, success);
+            logger::debug("Move selection up on list:('{}'), success:({})", listPath, success);
             return success;
         case f4vr::ScaleformListOp::MoveDown:
             success = list->Invoke("moveSelectionDown", nullptr, nullptr, 0);
-            common::logger::debug("Move selection down on list:('{}'), success:({})", listPath, success);
+            logger::debug("Move selection down on list:('{}'), success:({})", listPath, success);
             return success;
         case f4vr::ScaleformListOp::Select:
             GFx::Value event;
@@ -33,7 +32,7 @@ namespace
             args[2] = true;
             root->CreateObject(&event, "flash.events.Event", args, 3);
             success = list->Invoke("dispatchEvent", nullptr, &event, 1);
-            common::logger::debug("Press selection on list:('{}'), success:({})", listPath, success);
+            logger::debug("Press selection on list:('{}'), success:({})", listPath, success);
             return success;
         }
         throw std::invalid_argument("Invalid ScaleformListOp value");
@@ -77,7 +76,7 @@ namespace f4vr
     {
         GFx::Value list;
         if (!root->GetVariable(&list, listPath)) {
-            common::logger::trace("List operation failed on list:('{}'), list not found", listPath);
+            logger::trace("List operation failed on list:('{}'), list not found", listPath);
             return false;
         }
         return invokeOperationOnListElement(root, &list, op, listPath);
@@ -91,7 +90,7 @@ namespace f4vr
     {
         GFx::Value messageHolder;
         if (!root->GetVariable(&messageHolder, messageHolderPath)) {
-            common::logger::trace("List operation failed on message box list:('{}'), message box not found", messageHolderPath);
+            logger::trace("List operation failed on message box list:('{}'), message box not found", messageHolderPath);
             return false;
         }
         return findAndWorkOnScaleformElement(&messageHolder, "List_mc", [root,op, messageHolderPath](GFx::Value& list) {
@@ -111,9 +110,9 @@ namespace f4vr
         args[1] = false;
         GFx::Value result;
         if (!root->Invoke((path + ".ProcessUserEvent").c_str(), &result, args, 2)) {
-            common::logger::warn("Failed to invoke Scaleform ProcessUserEvent '{}' on '{}'", eventName, path.c_str());
+            logger::warn("Failed to invoke Scaleform ProcessUserEvent '{}' on '{}'", eventName, path.c_str());
         }
-        common::logger::debug("Scaleform ProcessUserEvent invoked with '{}' on '{}'; Result:({})", eventName, path.c_str(), result.IsBoolean() ? result.GetBoolean() : -1);
+        logger::debug("Scaleform ProcessUserEvent invoked with '{}' on '{}'; Result:({})", eventName, path.c_str(), result.IsBoolean() ? result.GetBoolean() : -1);
     }
 
     /**
@@ -130,9 +129,9 @@ namespace f4vr
         root->CreateObject(&event, "flash.events.Event", args, 3);
         GFx::Value result;
         if (!root->Invoke((path + ".dispatchEvent").c_str(), &result, &event, 1)) {
-            common::logger::warn("Failed to invoke Scaleform dispatchEvent '{}' on '{}'", eventName, path.c_str());
+            logger::warn("Failed to invoke Scaleform dispatchEvent '{}' on '{}'", eventName, path.c_str());
         }
-        common::logger::debug("Scaleform dispatchEvent invoked with '{}' on '{}'; Result:({})", eventName, path.c_str(), result.IsBoolean() ? result.GetBoolean() : -1);
+        logger::debug("Scaleform dispatchEvent invoked with '{}' on '{}'; Result:({})", eventName, path.c_str(), result.IsBoolean() ? result.GetBoolean() : -1);
     }
 
     /**

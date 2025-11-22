@@ -3,7 +3,7 @@
 #include "PapyrusInterfaces.h"
 #include "PapyrusValue.h"
 #include "PapyrusVM.h"
-#include "common/Logger.h"
+
 
 // Forward declarations
 namespace F4SEVR
@@ -47,7 +47,7 @@ namespace F4SEVR
                 }
 #if _DEBUG
                 else {
-                    common::logger::warn("Failed to unpack {} argument ({}) struct member not found.", structName.c_str(), name.c_str());
+                    logger::warn("Failed to unpack {} argument ({}) struct member not found.", structName.c_str(), name.c_str());
                 }
 #endif
                 typeInfo->Release();
@@ -79,7 +79,7 @@ namespace F4SEVR
                 }
 #if _DEBUG
                 else {
-                    common::logger::warn("Failed to pack {} argument ({}) struct member not found.", structName.c_str(), name.c_str());
+                    logger::warn("Failed to pack {} argument ({}) struct member not found.", structName.c_str(), name.c_str());
                 }
 #endif
 
@@ -108,7 +108,7 @@ namespace F4SEVR
                         }
 #if _DEBUG
                         else {
-                            common::logger::warn("Failed to pack {} argument ({}) struct member type mismatch got ({}) expected ({}).",
+                            logger::warn("Failed to pack {} argument ({}) struct member type mismatch got ({}) expected ({}).",
                                 structName.c_str(), item->name.c_str(), m_data[item->name].type, memberType);
                         }
 #endif
