@@ -31,7 +31,7 @@ namespace
     }
 }
 
-namespace common
+namespace f4cf
 {
     constexpr auto INI_SECTION_DEBUG = "Debug";
     constexpr auto INI_SECTION_VRUI = "VRUI_DevLayout";
@@ -42,7 +42,7 @@ namespace common
     void ConfigBase::loadEmbeddedDefaultOnly()
     {
         CSimpleIniA ini;
-        const SI_Error rc = ini.LoadData(getEmbededResourceAsString(_module, _iniDefaultConfigEmbeddedResourceId));
+        const SI_Error rc = ini.LoadData(common::getEmbededResourceAsString(_module, _iniDefaultConfigEmbeddedResourceId));
         if (rc < 0) {
             logger::warn("Failed to load INI config file! Error:", rc);
             throw std::runtime_error("Failed to load INI config file! Error: " + std::to_string(rc));
@@ -81,7 +81,7 @@ namespace common
     void ConfigBase::loadIniConfig()
     {
         // create .ini if it doesn't exist
-        createFileFromResourceIfNotExists(_iniFilePath, _module, _iniDefaultConfigEmbeddedResourceId, true);
+        common::createFileFromResourceIfNotExists(_iniFilePath, _module, _iniDefaultConfigEmbeddedResourceId, true);
 
         loadIniConfigValues();
 
@@ -102,7 +102,7 @@ namespace common
      */
     int ConfigBase::loadEmbeddedResourceIniConfigVersion() const
     {
-        const auto embeddedIniStr = getEmbededResourceAsString(_module, _iniDefaultConfigEmbeddedResourceId);
+        const auto embeddedIniStr = common::getEmbededResourceAsString(_module, _iniDefaultConfigEmbeddedResourceId);
 
         CSimpleIniA ini;
         const SI_Error rc = ini.LoadData(embeddedIniStr);
@@ -300,7 +300,7 @@ namespace common
 
         // override the file with the default .ini resource.
         const auto tmpIniPath = std::string(_iniFilePath) + ".tmp";
-        createFileFromResourceIfNotExists(tmpIniPath, _module, _iniDefaultConfigEmbeddedResourceId, true);
+        common::createFileFromResourceIfNotExists(tmpIniPath, _module, _iniDefaultConfigEmbeddedResourceId, true);
 
         CSimpleIniA newIni;
         rc = newIni.LoadFile(tmpIniPath.c_str());
@@ -361,7 +361,7 @@ namespace common
     {
         std::unordered_map<std::string, RE::NiTransform> offsets;
         for (WORD resourceId = fromResourceId; resourceId <= toResourceId; resourceId++) {
-            auto resourceOpt = getEmbeddedResourceAsStringIfExists(resourceId);
+            auto resourceOpt = common::getEmbeddedResourceAsStringIfExists(resourceId);
             if (resourceOpt.has_value()) {
                 json json = json::parse(resourceOpt.value());
                 loadOffsetJsonToMap(json, offsets);
@@ -494,7 +494,7 @@ namespace common
                         lastEventTime = _lastIniFileWriteTime.load();
                     }
 
-                    logger::info("INI config change detected ({}), reload...", toDateTimeString(writeTime));
+                    logger::info("INI config change detected ({}), reload...", common::toDateTimeString(writeTime));
                     loadIniConfigValues();
                 });
         }).detach();

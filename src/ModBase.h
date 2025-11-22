@@ -1,6 +1,6 @@
 #pragma once
 
-#include "common/ConfigBase.h"
+#include "ConfigBase.h"
 
 namespace f4cf
 {
@@ -11,23 +11,23 @@ namespace f4cf
         {
             std::string name;
             std::string version;
-            common::ConfigBase* config;
+            ConfigBase* config;
             std::string logFileName = name;
             int trampolineAllocationSize = 256;
             bool setupMainGameLoop = false;
 
-            Settings(const std::string_view& name, const std::string_view& version, common::ConfigBase* config);
+            Settings(const std::string_view& name, const std::string_view& version, ConfigBase* config);
 
-            Settings(const std::string_view& name, const std::string_view& version, common::ConfigBase* config, int trampolineAllocationSize, bool setupMainGameLoop);
+            Settings(const std::string_view& name, const std::string_view& version, ConfigBase* config, int trampolineAllocationSize, bool setupMainGameLoop);
 
-            Settings(const std::string_view& name, const std::string_view& version, common::ConfigBase* config, const std::string_view& logFileName, int trampolineAllocationSize,
+            Settings(const std::string_view& name, const std::string_view& version, ConfigBase* config, const std::string_view& logFileName, int trampolineAllocationSize,
                 bool setupMainGameLoop);
         };
 
         explicit ModBase(Settings settings);
         virtual ~ModBase() = default;
 
-        common::ConfigBase* getConfig() const { return _settings.config; }
+        ConfigBase* getConfig() const { return _settings.config; }
 
         bool onF4SEPluginQuery(const F4SE::QueryInterface* skse, F4SE::PluginInfo* info) const;
         bool onF4SEPluginLoad(const F4SE::LoadInterface* f4se);

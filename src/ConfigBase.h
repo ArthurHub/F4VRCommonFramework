@@ -4,12 +4,11 @@
 #include <SimpleIni.h>
 #include <thomasmonkman-filewatch/FileWatch.hpp>
 
-#include "CommonUtils.h"
-#include "Logger.h"
+#include "Common/CommonUtils.h"
 
-namespace common
+namespace f4cf
 {
-    static const auto BASE_PATH = getRelativePathInDocuments(R"(\My Games\Fallout4VR\Mods_Config)");
+    static const auto BASE_PATH = common::getRelativePathInDocuments(R"(\My Games\Fallout4VR\Mods_Config)");
 
     class ConfigBase
     {
@@ -27,7 +26,7 @@ namespace common
         virtual void load()
         {
             logger::info("Load ini config...");
-            createDirDeep(_iniFilePath);
+            common::createDirDeep(_iniFilePath);
             loadIniConfig();
         }
 
