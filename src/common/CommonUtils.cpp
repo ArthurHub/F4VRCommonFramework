@@ -9,7 +9,7 @@
 #include "ModBase.h"
 #include "Version.h"
 
-namespace common
+namespace f4cf::common
 {
     /**
      * Safe equal check as floats are not exact.

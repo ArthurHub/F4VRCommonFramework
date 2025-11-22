@@ -4,7 +4,7 @@
 
 #include "../../external/openvr/openvr.h"
 
-namespace f4vr
+namespace f4cf::vrcf
 {
     enum VRButtonId : std::uint8_t
     {

@@ -6,7 +6,7 @@
 #include "MatrixUtils.h"
 #include "RE/Fallout.h"
 
-namespace common
+namespace f4cf::common
 {
     class Quaternion
     {

@@ -7,7 +7,7 @@
 #include "MainLoopHook.h"
 
 #include "f4vr/PlayerNodes.h"
-#include "f4vr/VRControllersManager.h"
+#include "vrcf/VRControllersManager.h"
 #include "vrui/UIManager.h"
 
 using namespace common;
@@ -124,7 +124,7 @@ namespace f4cf
     {
         CPPTRACE_TRY
             {
-                f4vr::VRControllers.update(f4vr::isLeftHandedMode());
+                vrcf::VRControllers.update(f4vr::isLeftHandedMode());
 
                 onFrameUpdate();
 
@@ -203,7 +203,7 @@ namespace f4cf
                     main_hook::validate();
                 }
 
-                f4vr::VRControllers.reset();
+                vrcf::VRControllers.reset();
 
                 logger::info("Reload config...");
                 _settings.config->load();

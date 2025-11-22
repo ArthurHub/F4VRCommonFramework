@@ -4,7 +4,7 @@
 #include <vector>
 #include <Windows.h>
 
-namespace common
+namespace f4cf::common
 {
     bool fEqual(float left, float right, float epsilon = 0.00001f);
     bool fNotEqual(float left, float right, float epsilon = 0.00001f);

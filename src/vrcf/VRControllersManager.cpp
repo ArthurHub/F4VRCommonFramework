@@ -6,7 +6,7 @@
 
 #include "../../external/openvr/openvr.h"
 
-namespace f4vr
+namespace f4cf::vrcf
 {
     /**
      * Update controller states; must be called each frame

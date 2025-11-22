@@ -1,6 +1,6 @@
 #pragma once
 
-namespace common
+namespace f4cf::common
 {
     // 3D space related functions
     float vec3Len(const RE::NiPoint3& v1);

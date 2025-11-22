@@ -2,7 +2,7 @@
 
 #include <numbers>
 
-namespace common
+namespace f4cf::common
 {
     RE::NiPoint3 vec3Norm(RE::NiPoint3 v1)
     {
