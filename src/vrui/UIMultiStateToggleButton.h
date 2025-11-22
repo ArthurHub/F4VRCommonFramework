@@ -10,7 +10,7 @@
 #include <string>
 #include <utility>
 
-namespace vrui
+namespace f4cf::vrui
 {
     template <class StateT>
     class UIMultiStateToggleButton : public UIWidget

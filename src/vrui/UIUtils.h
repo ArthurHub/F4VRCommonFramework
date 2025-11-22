@@ -2,7 +2,7 @@
 
 #include "UIElement.h"
 
-namespace vrui
+namespace f4cf::vrui
 {
     struct UIUtils
     {

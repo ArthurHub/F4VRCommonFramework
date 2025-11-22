@@ -2,7 +2,7 @@
 
 #include <optional>
 
-namespace vrui
+namespace f4cf::vrui
 {
     class UIModAdapter
     {

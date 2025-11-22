@@ -5,7 +5,7 @@
 
 #include <vector>
 
-namespace vrui
+namespace f4cf::vrui
 {
     class UIManager
     {

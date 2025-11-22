@@ -4,7 +4,7 @@
 
 #include "UIElement.h"
 
-namespace vrui
+namespace f4cf::vrui
 {
     /**
      * How the container will lay out the child elements.

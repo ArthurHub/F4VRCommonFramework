@@ -4,7 +4,7 @@
 
 using namespace common;
 
-namespace vrui
+namespace f4cf::vrui
 {
     std::string UIWidget::toString() const
     {

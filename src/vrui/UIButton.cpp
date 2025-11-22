@@ -2,7 +2,7 @@
 
 #include <format>
 
-namespace vrui
+namespace f4cf::vrui
 {
     std::string UIButton::toString() const
     {

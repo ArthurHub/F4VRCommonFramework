@@ -8,7 +8,7 @@
 
 #include "f4vr/PlayerNodes.h"
 #include "f4vr/VRControllersManager.h"
-#include "ui/UIManager.h"
+#include "vrui/UIManager.h"
 
 using namespace common;
 

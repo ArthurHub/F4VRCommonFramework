@@ -3,7 +3,7 @@
 #include "UIElement.h"
 #include "UIUtils.h"
 
-namespace vrui
+namespace f4cf::vrui
 {
     class UIWidget : public UIElement
     {

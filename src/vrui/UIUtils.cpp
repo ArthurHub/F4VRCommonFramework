@@ -23,7 +23,7 @@ namespace
     }
 }
 
-namespace vrui
+namespace f4cf::vrui
 {
     /**
      * Get the size of a UI element based on its width-to-height ratio.

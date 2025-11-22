@@ -4,7 +4,7 @@
 #include "UIElement.h"
 #include "UIToggleButton.h"
 
-namespace vrui
+namespace f4cf::vrui
 {
     class UIToggleGroupContainer : public UIContainer
     {

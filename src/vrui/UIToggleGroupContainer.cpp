@@ -4,7 +4,7 @@
 
 #include "UIManager.h"
 
-namespace vrui
+namespace f4cf::vrui
 {
     std::string UIToggleGroupContainer::toString() const
     {

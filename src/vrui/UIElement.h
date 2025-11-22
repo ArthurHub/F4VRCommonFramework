@@ -3,7 +3,7 @@
 #include "UIModAdapter.h"
 #include "../common/Quaternion.h"
 
-namespace vrui
+namespace f4cf::vrui
 {
     struct UISize
     {

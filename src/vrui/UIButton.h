@@ -2,7 +2,7 @@
 
 #include "UIWidget.h"
 
-namespace vrui
+namespace f4cf::vrui
 {
     class UIButton : public UIWidget
     {

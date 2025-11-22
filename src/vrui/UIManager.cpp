@@ -4,7 +4,7 @@
 
 using namespace common;
 
-namespace vrui
+namespace f4cf::vrui
 {
     // globals, globals everywhere...
     UIManager* g_uiManager;

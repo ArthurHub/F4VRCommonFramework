@@ -3,7 +3,7 @@
 #include <format>
 #include <stdexcept>
 
-namespace vrui
+namespace f4cf::vrui
 {
     std::string UIToggleButton::toString() const
     {
