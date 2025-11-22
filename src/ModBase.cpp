@@ -3,7 +3,7 @@
 #include <cpptrace/from_current.hpp>
 #include <fmt/chrono.h>
 
-#include "Debug.h"
+#include "f4vr/DebugDump.h"
 #include "MainLoopHook.h"
 
 #include "f4vr/PlayerNodes.h"
@@ -223,22 +223,22 @@ namespace f4cf
     void ModBase::checkDebugDump() const
     {
         if (_settings.config->checkDebugDumpDataOnceFor("all_nodes")) {
-            dump::printAllNodes();
+            f4vr::DebugDump::printAllNodes();
         }
         if (_settings.config->checkDebugDumpDataOnceFor("pipboy")) {
-            dump::printNodes(f4vr::getPlayerNodes()->PipboyRoot_nif_only_node);
+            f4vr::DebugDump::printNodes(f4vr::getPlayerNodes()->PipboyRoot_nif_only_node);
         }
         if (_settings.config->checkDebugDumpDataOnceFor("world")) {
-            dump::printNodes(f4vr::getPlayerNodes()->primaryWeaponScopeCamera->parent->parent->parent->parent->parent->parent);
+            f4vr::DebugDump::printNodes(f4vr::getPlayerNodes()->primaryWeaponScopeCamera->parent->parent->parent->parent->parent->parent);
         }
         if (_settings.config->checkDebugDumpDataOnceFor("fp_skelly")) {
-            dump::printNodes(f4vr::getFirstPersonSkeleton());
+            f4vr::DebugDump::printNodes(f4vr::getFirstPersonSkeleton());
         }
         if (_settings.config->checkDebugDumpDataOnceFor("skelly")) {
-            dump::printNodes(f4vr::getRootNode()->parent);
+            f4vr::DebugDump::printNodes(f4vr::getRootNode()->parent);
         }
         if (_settings.config->checkDebugDumpDataOnceFor("geometry")) {
-            dump::dumpPlayerGeometry();
+            f4vr::DebugDump::dumpPlayerGeometry();
         }
     }
 }

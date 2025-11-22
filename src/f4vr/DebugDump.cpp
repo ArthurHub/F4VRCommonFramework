@@ -1,4 +1,4 @@
-#include "Debug.h"
+#include "DebugDump.h"
 
 #include "Logger.h"
 #include "f4vr/PlayerNodes.h"
@@ -78,9 +78,9 @@ namespace
     }
 }
 
-namespace f4cf::dump
+namespace f4cf::f4vr
 {
-    void printMatrix(const RE::NiMatrix3* mat)
+    void DebugDump::printMatrix(const RE::NiMatrix3* mat)
     {
         logger::info("Dump matrix:");
         std::string row;
@@ -94,14 +94,14 @@ namespace f4cf::dump
         }
     }
 
-    void positionDiff()
+    void DebugDump::positionDiff()
     {
         const auto firstpos = f4vr::getPlayerNodes()->HmdNode->world.translate;
         const auto skellypos = f4vr::getRootNode()->world.translate;
         logger::info("difference = {} {} {}", firstpos.x - skellypos.x, firstpos.y - skellypos.y, firstpos.z - skellypos.z);
     }
 
-    void printAllNodes()
+    void DebugDump::printAllNodes()
     {
         auto* node = f4vr::getWorldRootNode();
         while (node->parent) {
@@ -110,7 +110,7 @@ namespace f4cf::dump
         printNodes(node, false);
     }
 
-    void printNodes(RE::NiAVObject* node, const bool printAncestors)
+    void DebugDump::printNodes(RE::NiAVObject* node, const bool printAncestors)
     {
         logger::info("Children of '{}':", node->name.c_str());
         printNodeChildren(node, "");
@@ -123,7 +123,7 @@ namespace f4cf::dump
     /**
      * Print the local transform data of nodes tree.
      */
-    void printNodesTransform(RE::NiAVObject* node, const bool printAncestors)
+    void DebugDump::printNodesTransform(RE::NiAVObject* node, const bool printAncestors)
     {
         logger::info("Children of '{}':", node->name.c_str());
         printNodesTransformChildren(node, "");
@@ -133,7 +133,7 @@ namespace f4cf::dump
         }
     }
 
-    void printTransform(const std::string& name, const RE::NiTransform& transform, const bool sample)
+    void DebugDump::printTransform(const std::string& name, const RE::NiTransform& transform, const bool sample)
     {
         const auto frm = "Transform '" + name + "' Pos:({:.2f}, {:.2f}, {:.2f}), Rot:[[{:.2f}, {:.2f}, {:.2f}][{:.2f}, {:.2f}, {:.2f}][{:.2f}, {:.2f}, {:.2f}]], Scale:({:.2f})";
         if (sample) {
@@ -147,7 +147,7 @@ namespace f4cf::dump
         }
     }
 
-    void printPosition(const std::string& name, const RE::NiPoint3& pos, const bool sample)
+    void DebugDump::printPosition(const std::string& name, const RE::NiPoint3& pos, const bool sample)
     {
         const auto frm = "Transform '" + name + "' Pos: ({:.2f}, {:.2f}, {:.2f})";
         if (sample) {
@@ -160,7 +160,7 @@ namespace f4cf::dump
     /**
      * Dump the player body parts and whatever they are hidden.
      */
-    void dumpPlayerGeometry()
+    void DebugDump::dumpPlayerGeometry()
     {
         const auto rn = reinterpret_cast<RE::BSFadeNode*>(f4vr::getWorldRootNode());
         for (std::uint32_t i = 0; i < rn->geomArray.size(); ++i) {
@@ -169,7 +169,7 @@ namespace f4cf::dump
         }
     }
 
-    void debug()
+    void DebugDump::debug()
     {
         static std::uint64_t fc = 0;
 
@@ -332,7 +332,7 @@ namespace f4cf::dump
         fc++;
     }
 
-    void printScaleFormElements(GFx::Value* elm, const std::string& padding)
+    void DebugDump::printScaleFormElements(GFx::Value* elm, const std::string& padding)
     {
         GFx::Value childrenCountVal;
         elm->GetMember("numChildren", &childrenCountVal);
