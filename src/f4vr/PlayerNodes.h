@@ -3,7 +3,7 @@
 #include "BSFlattenedBoneTree.h"
 #include "F4VRUtils.h"
 
-namespace f4vr
+namespace f4cf::f4vr
 {
     // part of PlayerCharacter object but making useful struct below since not mapped in F4SE
     struct PlayerNodes

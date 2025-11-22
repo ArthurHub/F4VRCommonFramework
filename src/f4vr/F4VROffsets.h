@@ -8,7 +8,7 @@
 
 class BSAnimationManager;
 
-namespace f4vr
+namespace f4cf::f4vr
 {
     template <class T>
     class StackPtr

@@ -5,7 +5,7 @@
 #include "f4sevr/PapyrusUtils.h"
 #include "f4sevr/PapyrusVM.h"
 
-namespace f4vr
+namespace f4cf::f4vr
 {
     /**
      * A way to execute Papyrus functions from C++ code.

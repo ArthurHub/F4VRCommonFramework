@@ -3,7 +3,7 @@
 #include <functional>
 #include <optional>
 
-namespace f4vr
+namespace f4cf::f4vr
 {
     enum class ScaleformListOp : std::uint8_t
     {

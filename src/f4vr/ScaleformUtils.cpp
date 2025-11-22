@@ -39,7 +39,7 @@ namespace
     }
 }
 
-namespace f4vr
+namespace f4cf::f4vr
 {
     bool getScaleformBool(const GFx::Movie* root, const char* path)
     {

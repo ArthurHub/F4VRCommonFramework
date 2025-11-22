@@ -1,7 +1,7 @@
 #pragma once
 #include "F4VROffsets.h"
 
-namespace f4vr
+namespace f4cf::f4vr
 {
     static constexpr std::uint32_t KEYWORD_POWER_ARMOR = 0x4D8A1;
     static constexpr std::uint32_t KEYWORD_POWER_ARMOR_FRAME = 0x15503F;

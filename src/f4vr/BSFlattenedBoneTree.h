@@ -3,7 +3,7 @@
 #include "F4VROffsets.h"
 #include "f4sevr/Common.h"
 
-namespace f4vr
+namespace f4cf::f4vr
 {
     class BSFlattenedBoneTree : public RE::NiNode
     {

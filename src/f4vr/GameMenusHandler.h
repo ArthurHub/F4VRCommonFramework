@@ -5,7 +5,7 @@
 
 // Adopted from Shizof mod with permission, Thanks Shizof!!
 
-namespace f4vr
+namespace f4cf::f4vr
 {
     class GameMenusHandler : public RE::BSTEventSink<RE::MenuOpenCloseEvent>
     {

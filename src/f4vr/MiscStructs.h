@@ -1,6 +1,6 @@
 #pragma once
 
-namespace f4vr
+namespace f4cf::f4vr
 {
     constexpr std::uint32_t PipboyAA = 0x0001ED3D;
     constexpr std::uint32_t PipboyArmor = 0x00021B3B;

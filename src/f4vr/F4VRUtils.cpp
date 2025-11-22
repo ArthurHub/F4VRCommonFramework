@@ -4,7 +4,7 @@
 #include "f4sevr/Forms.h"
 #include "f4sevr/PapyrusUtils.h"
 
-namespace f4vr
+namespace f4cf::f4vr
 {
     void showMessagebox(const std::string& text)
     {
