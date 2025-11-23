@@ -91,7 +91,7 @@ namespace f4cf::common
 
         void setAngleAxis(float angle, RE::NiPoint3 axis)
         {
-            axis = vec3Norm(axis);
+            axis = MatrixUtils::vec3Norm(axis);
 
             angle /= 2;
 
@@ -174,9 +174,9 @@ namespace f4cf::common
 
         void vec2Vec(const RE::NiPoint3 v1, const RE::NiPoint3 v2)
         {
-            RE::NiPoint3 cross = vec3Cross(vec3Norm(v1), vec3Norm(v2));
+            RE::NiPoint3 cross = MatrixUtils::vec3Cross(MatrixUtils::vec3Norm(v1), MatrixUtils::vec3Norm(v2));
 
-            const float dotP = vec3Dot(vec3Norm(v1), vec3Norm(v2));
+            const float dotP = MatrixUtils::vec3Dot(MatrixUtils::vec3Norm(v1), MatrixUtils::vec3Norm(v2));
 
             if (dotP > 0.99999999) {
                 this->makeIdentity();
@@ -184,16 +184,16 @@ namespace f4cf::common
             }
             if (dotP < -0.99999999) {
                 // reverse it
-                cross = vec3Norm(vec3Cross(RE::NiPoint3(0, 1, 0), v1));
-                if (vec3Len(cross) < 0.00000001) {
-                    cross = vec3Norm(vec3Cross(RE::NiPoint3(1, 0, 0), v1));
+                cross = MatrixUtils::vec3Norm(MatrixUtils::vec3Cross(RE::NiPoint3(0, 1, 0), v1));
+                if (MatrixUtils::vec3Len(cross) < 0.00000001) {
+                    cross = MatrixUtils::vec3Norm(MatrixUtils::vec3Cross(RE::NiPoint3(1, 0, 0), v1));
                 }
                 this->setAngleAxis(std::numbers::pi_v<float>, cross);
                 this->normalize();
                 return;
             }
 
-            w = sqrtf(powf(vec3Len(v1), 2) * powf(vec3Len(v2), 2)) + dotP;
+            w = sqrtf(powf(MatrixUtils::vec3Len(v1), 2) * powf(MatrixUtils::vec3Len(v2), 2)) + dotP;
             x = cross.x;
             y = cross.y;
             z = cross.z;

@@ -87,12 +87,12 @@ namespace f4cf::vrui
         const auto finger = context->getInteractionBoneWorldPosition();
         const auto widgetCenter = _node->world.translate;
 
-        const float distance = vec3Len(finger - widgetCenter);
+        const float distance = MatrixUtils::vec3Len(finger - widgetCenter);
 
         // calculate the distance only in the y-axis
         const RE::NiPoint3 forward = _node->world.rotate.Transpose() * (RE::NiPoint3(0, 1, 0));
         const RE::NiPoint3 vectorToCurr = widgetCenter - finger;
-        const float yOnlyDistance = vec3Dot(forward, vectorToCurr);
+        const float yOnlyDistance = MatrixUtils::vec3Dot(forward, vectorToCurr);
 
         updatePressableCloseToInteraction(context, distance, yOnlyDistance);
 
@@ -111,7 +111,7 @@ namespace f4cf::vrui
 
         // distance in y-axis from original location before press offset
         const RE::NiPoint3 vectorToOrg = vectorToCurr - _node->world.rotate.Transpose() * (RE::NiPoint3(0, _pressYOffset, 0));
-        const float pressDistance = -vec3Dot(forward, vectorToOrg);
+        const float pressDistance = -MatrixUtils::vec3Dot(forward, vectorToOrg);
 
         if (std::isnan(pressDistance) || pressDistance < 0) {
             _pressYOffset = 0;

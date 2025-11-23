@@ -31,7 +31,7 @@ namespace f4cf::vrui
         if (_followInteractionPosition) {
             const auto finger = adapter->getInteractionBoneWorldPosition();
             const auto diff = finger - _node->world.translate;
-            if (!std::isnan(diff.x) && !std::isnan(diff.y) && !std::isnan(diff.z) && vec3Len(diff) < 500) {
+            if (!std::isnan(diff.x) && !std::isnan(diff.y) && !std::isnan(diff.z) && MatrixUtils::vec3Len(diff) < 500) {
                 _node->local.translate += diff;
             } else {
                 _node->local.translate = RE::NiPoint3(0, 0, 0);

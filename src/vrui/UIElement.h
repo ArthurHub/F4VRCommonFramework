@@ -21,7 +21,7 @@ namespace f4cf::vrui
             _name(std::move(name))
         {
             _transform.translate = RE::NiPoint3(0, 0, 0);
-            _transform.rotate = common::getIdentityMatrix();
+            _transform.rotate = common::MatrixUtils::getIdentityMatrix();
             _transform.scale = 1;
         }
 

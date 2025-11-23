@@ -4,9 +4,14 @@
 
 namespace f4cf::common
 {
-    RE::NiPoint3 vec3Norm(RE::NiPoint3 v1)
+    float MatrixUtils::vec3Len(const RE::NiPoint3& v1)
     {
-        const float mag = vec3Len(v1);
+        return sqrtf(v1.x * v1.x + v1.y * v1.y + v1.z * v1.z);
+    }
+
+    RE::NiPoint3 MatrixUtils::vec3Norm(RE::NiPoint3 v1)
+    {
+        const float mag = MatrixUtils::vec3Len(v1);
 
         if (mag < 0.000001) {
             const float maxX = abs(v1.x);
@@ -29,12 +34,12 @@ namespace f4cf::common
         return v1;
     }
 
-    float vec3Dot(const RE::NiPoint3& v1, const RE::NiPoint3& v2)
+    float MatrixUtils::vec3Dot(const RE::NiPoint3& v1, const RE::NiPoint3& v2)
     {
         return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
     }
 
-    RE::NiPoint3 vec3Cross(const RE::NiPoint3& v1, const RE::NiPoint3& v2)
+    RE::NiPoint3 MatrixUtils::vec3Cross(const RE::NiPoint3& v1, const RE::NiPoint3& v2)
     {
         return RE::NiPoint3(
             v1.y * v2.z - v1.z * v2.y,
@@ -46,12 +51,12 @@ namespace f4cf::common
     // the determinant is proportional to the sin of the angle between two vectors.   In 3d case find the sin of the angle between v1 and v2
     // along their angle of rotation with unit vector n
     // https://stackoverflow.com/questions/14066933/direct-way-of-computing-clockwise-angle-between-2-vectors/16544330#16544330
-    float vec3Det(const RE::NiPoint3 v1, const RE::NiPoint3 v2, const RE::NiPoint3 n)
+    float MatrixUtils::vec3Det(const RE::NiPoint3 v1, const RE::NiPoint3 v2, const RE::NiPoint3 n)
     {
         return v1.x * v2.y * n.z + v2.x * n.y * v1.z + n.x * v1.y * v2.z - v1.z * v2.y * n.x - v2.z * n.y * v1.x - n.z * v1.y * v2.x;
     }
 
-    float distanceNoSqrt(const RE::NiPoint3 po1, const RE::NiPoint3 po2)
+    float MatrixUtils::distanceNoSqrt(const RE::NiPoint3 po1, const RE::NiPoint3 po2)
     {
         const float x = po1.x - po2.x;
         const float y = po1.y - po2.y;
@@ -59,24 +64,24 @@ namespace f4cf::common
         return x * x + y * y + z * z;
     }
 
-    float distanceNoSqrt2d(const float x1, const float y1, const float x2, const float y2)
+    float MatrixUtils::distanceNoSqrt2d(const float x1, const float y1, const float x2, const float y2)
     {
         const float x = x1 - x2;
         const float y = y1 - y2;
         return x * x + y * y;
     }
 
-    float degreesToRads(const float deg)
+    float MatrixUtils::degreesToRads(const float deg)
     {
         return deg * std::numbers::pi_v<float> / 180;
     }
 
-    float radsToDegrees(const float rad)
+    float MatrixUtils::radsToDegrees(const float rad)
     {
         return rad * 180 / std::numbers::pi_v<float>;
     }
 
-    RE::NiPoint3 rotateXY(const RE::NiPoint3 vec, const float angle)
+    RE::NiPoint3 MatrixUtils::rotateXY(const RE::NiPoint3 vec, const float angle)
     {
         RE::NiPoint3 retV;
 
@@ -87,7 +92,7 @@ namespace f4cf::common
         return retV;
     }
 
-    RE::NiPoint3 pitchVec(const RE::NiPoint3 vec, const float angle)
+    RE::NiPoint3 MatrixUtils::pitchVec(const RE::NiPoint3 vec, const float angle)
     {
         const auto rotAxis = RE::NiPoint3(vec.y, -vec.x, 0);
         return getRotationAxisAngle(vec3Norm(rotAxis), angle) * vec;
@@ -99,7 +104,7 @@ namespace f4cf::common
      * lightNode->local = calculateRelocation(lightNode, handNode);
      * This will move the light node to the hand node position and rotation.
      */
-    RE::NiTransform calculateRelocation(const RE::NiAVObject* fromNode, const RE::NiAVObject* toNode, const RE::NiPoint3 offset)
+    RE::NiTransform MatrixUtils::calculateRelocation(const RE::NiAVObject* fromNode, const RE::NiAVObject* toNode, const RE::NiPoint3 offset)
     {
         RE::NiTransform out;
         out.scale = fromNode->local.scale;
@@ -108,14 +113,15 @@ namespace f4cf::common
         return out;
     }
 
-    RE::NiMatrix3 getIdentityMatrix()
+    RE::NiMatrix3 MatrixUtils::getIdentityMatrix()
     {
         RE::NiMatrix3 iden;
         iden.MakeIdentity();
         return iden;
     }
 
-    RE::NiMatrix3 getMatrix(const float r1, const float r2, const float r3, const float r4, const float r5, const float r6, const float r7, const float r8, const float r9)
+    RE::NiMatrix3 MatrixUtils::getMatrix(const float r1, const float r2, const float r3, const float r4, const float r5, const float r6, const float r7, const float r8,
+        const float r9)
     {
         RE::NiMatrix3 result;
         result.entry[0][0] = r1;
@@ -130,7 +136,7 @@ namespace f4cf::common
         return result;
     }
 
-    void getEulerAnglesFromMatrix(const RE::NiMatrix3& matrix, float* heading, float* roll, float* attitude)
+    void MatrixUtils::getEulerAnglesFromMatrix(const RE::NiMatrix3& matrix, float* heading, float* roll, float* attitude)
     {
         if (matrix.entry[2][0] < 1.0) {
             if (matrix.entry[2][0] > -1.0) {
@@ -149,7 +155,7 @@ namespace f4cf::common
         }
     }
 
-    RE::NiMatrix3 getMatrixFromEulerAngles(const float heading, const float roll, const float attitude)
+    RE::NiMatrix3 MatrixUtils::getMatrixFromEulerAngles(const float heading, const float roll, const float attitude)
     {
         const float sinX = sin(heading);
         const float cosX = cos(heading);
@@ -171,7 +177,7 @@ namespace f4cf::common
         return result;
     }
 
-    RE::NiMatrix3 getMatrixFromRotateVectorVec(const RE::NiPoint3& toVec, const RE::NiPoint3& fromVec)
+    RE::NiMatrix3 MatrixUtils::getMatrixFromRotateVectorVec(const RE::NiPoint3& toVec, const RE::NiPoint3& fromVec)
     {
         const auto toVecNorm = vec3Norm(toVec);
         const auto fromVecNorm = vec3Norm(fromVec);
@@ -202,7 +208,7 @@ namespace f4cf::common
     }
 
     // Gets a rotation matrix from an axis and an angle
-    RE::NiMatrix3 getRotationAxisAngle(RE::NiPoint3 axis, const float theta)
+    RE::NiMatrix3 MatrixUtils::getRotationAxisAngle(RE::NiPoint3 axis, const float theta)
     {
         RE::NiMatrix3 result;
         // This math was found online http://www.euclideanspace.com/maths/geometry/rotations/conversions/angleToMatrix/
@@ -228,7 +234,8 @@ namespace f4cf::common
         return result.Transpose();
     }
 
-    RE::NiTransform getTransform(const float x, const float y, const float z, const float r1, const float r2, const float r3, const float r4, const float r5, const float r6,
+    RE::NiTransform MatrixUtils::getTransform(const float x, const float y, const float z, const float r1, const float r2, const float r3, const float r4, const float r5,
+        const float r6,
         const float r7, const float r8, const float r9, const float scale)
     {
         RE::NiTransform transform;
@@ -242,7 +249,7 @@ namespace f4cf::common
      * Compute the delta transform between two transforms.
      * i.e. the transform that takes from "from" transform to the "to" transform.
      */
-    RE::NiTransform getDeltaTransform(const RE::NiTransform& from, const RE::NiTransform& to)
+    RE::NiTransform MatrixUtils::getDeltaTransform(const RE::NiTransform& from, const RE::NiTransform& to)
     {
         RE::NiTransform delta;
         delta.scale = to.scale / from.scale;
@@ -255,7 +262,7 @@ namespace f4cf::common
      * Compute the target transform starting with base using the delta transform from "from" to "to".
      * i.e. made the same change as from->to on base to get target.
      */
-    RE::NiTransform getTargetTransform(const RE::NiTransform& baseFrom, const RE::NiTransform& baseTo, const RE::NiTransform& targetFrom)
+    RE::NiTransform MatrixUtils::getTargetTransform(const RE::NiTransform& baseFrom, const RE::NiTransform& baseTo, const RE::NiTransform& targetFrom)
     {
         const auto delta = getDeltaTransform(baseFrom, baseTo);
         RE::NiTransform target;
@@ -268,7 +275,7 @@ namespace f4cf::common
     /**
      * Check if the camera is looking at the object and the object facing the camera
      */
-    bool isCameraLookingAtObject(const RE::NiTransform& cameraTrans, const RE::NiTransform& objectTrans, const float detectThresh)
+    bool MatrixUtils::isCameraLookingAtObject(const RE::NiTransform& cameraTrans, const RE::NiTransform& objectTrans, const float detectThresh)
     {
         // Get the position of the camera and the object
         const auto cameraPos = cameraTrans.translate;

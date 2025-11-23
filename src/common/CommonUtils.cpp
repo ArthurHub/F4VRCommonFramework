@@ -53,11 +53,6 @@ namespace f4cf::common
         return ltrim(rtrim(s));
     }
 
-    float vec3Len(const RE::NiPoint3& v1)
-    {
-        return sqrt(v1.x * v1.x + v1.y * v1.y + v1.z * v1.z);
-    }
-
     /**
      * Find dll embedded resource by id and return its data as string if exists.
      * Return null if the resource is not found.
@@ -323,6 +318,6 @@ namespace f4cf::common
     RE::NiMatrix3 getMatrixFromDebugFlowFlags()
     {
         const auto config = g_mod->getConfig();
-        return getMatrixFromEulerAngles(degreesToRads(config->debugFlowFlag1), degreesToRads(config->debugFlowFlag2), degreesToRads(config->debugFlowFlag3));
+        return MatrixUtils::getMatrixFromEulerAngles(MatrixUtils::degreesToRads(config->debugFlowFlag1), MatrixUtils::degreesToRads(config->debugFlowFlag2), MatrixUtils::degreesToRads(config->debugFlowFlag3));
     }
 }
