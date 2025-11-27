@@ -5,7 +5,7 @@
 
 namespace my_mod
 {
-    class MyMod : public f4cf::ModBase
+    class MyMod : public ModBase
     {
     public:
         MyMod() :

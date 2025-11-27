@@ -2,18 +2,18 @@ Nexus:
 https://www.nexusmods.com/fallout4/mods/???
 
 Source Code:
-https://github.com/ArthurHub/???
+https://github.com/???/???
 
 Wiki:
-https://github.com/ArthurHub/???/wiki
+https://github.com/???/???/wiki
 
 Discussion / Bug Reports:
 https://www.nexusmods.com/fallout4/mods/????tab=posts
 or
-https://github.com/ArthurHub/???/issues
+https://github.com/???/???/issues
 
 Dev Releases:
-https://github.com/ArthurHub/???/releases
+https://github.com/???/???/releases
 
 Config Files location:
 %USERPROFILE%\Documents\My Games\Fallout4VR\Mods_Config\???

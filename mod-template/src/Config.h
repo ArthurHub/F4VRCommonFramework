@@ -1,14 +1,15 @@
 #pragma once
 
 #include "Resources.h"
-#include "common/ConfigBase.h"
+#include "ConfigBase.h"
+#include "common/CommonUtils.h"
 
 namespace my_mod
 {
     static const auto BASE_PATH = common::BASE_PATH + "\\" + std::string(Version::PROJECT);
     static const auto INI_PATH = BASE_PATH + "\\" + std::string(Version::PROJECT) + ".ini";
 
-    class Config : public common::ConfigBase
+    class Config : public ConfigBase
     {
     public:
         explicit Config() :
