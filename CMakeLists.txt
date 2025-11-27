@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.23)
 
 # >>> Project
 set(NAME "F4VRCommonFramework")
-set(VERSION 0.1.0)
+set(VERSION 0.2.0)
 
 
 # >>> Folders
@@ -47,28 +47,25 @@ else()
   message(FATAL_ERROR ">> Variable VCPKG_ROOT is not set!")
 endif()
 
-# >>> CommonLibF4: locate and add
-set_from_environment(CommonLibF4Path)
-find_path(CommonLibF4PathFind
-  NAMES "CommonLibF4/include/REL/Relocation.h"
-  HINTS
-    "${CMAKE_CURRENT_LIST_DIR}/external/CommonLibF4" # nested under the framework
-    "${CMAKE_CURRENT_LIST_DIR}/CommonLibF4"
-    "${CMAKE_SOURCE_DIR}/external/CommonLibF4"       # sibling to the framework in the parent project
-    "${CMAKE_SOURCE_DIR}/CommonLibF4"
-    "${CMAKE_SOURCE_DIR}/../CommonLibF4"
-    "${CommonLibF4_ROOT}"
-    "${CommonLibF4Path}"
-)
-if(${CommonLibF4PathFind} STREQUAL "CommonLibF4PathFind-NOTFOUND")
-  message(FATAL_ERROR ">> CommonLibF4 path not found! Did you init submodules or set CommonLibF4Path?")
+
+# >>> CommonLibF4VR: locate and add
+if(DEFINED COMMON_LIB_F4VR_PATH AND NOT COMMON_LIB_F4VR_PATH STREQUAL "")
+  set(COMMON_LIB_F4VR_PATH_SELECTED ${COMMON_LIB_F4VR_PATH} CACHE STRING "" FORCE)
+  message(">>> Using CommonLibF4VR from custom variable: '${COMMON_LIB_F4VR_PATH_SELECTED}'")
+else()
+  set(COMMON_LIB_F4VR_PATH_SELECTED "${ROOT_DIR}/external/CommonLibF4VR" CACHE STRING "" FORCE)
+  message(">>> Using CommonLibF4VR in external: '${COMMON_LIB_F4VR_PATH_SELECTED}'")
+endif()
+# Verify path is correct
+if(NOT EXISTS "${COMMON_LIB_F4VR_PATH_SELECTED}/CommonLibF4/include/REL/Relocation.h")
+  message(FATAL_ERROR ">> CommonLibF4VR path not found in '${COMMON_LIB_F4VR_PATH_SELECTED}'! Did you init submodules or set COMMON_LIB_F4VR_PATH?")
 endif()
 
 
 # >>> Create Project
 project(${NAME} VERSION ${VERSION} LANGUAGES CXX)
 message(">>> Building '${PROJECT_NAME}' v:${PROJECT_VERSION}")
-message(">>> Using CommonLibF4: '${CommonLibF4PathFind}'")
+message(">>> Using CommonLibF4VR: '${COMMON_LIB_F4VR_PATH_SELECTED}'")
 
 # >>> Build flags / LTO
 add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
@@ -88,7 +85,7 @@ if(NOT F4SE_SUPPORT_XBYAK OR ENABLE_FALLOUT_F4 OR ENABLE_FALLOUT_NG OR NOT ENABL
 endif()
 
 # Bring in CLF4 (expects it to export CommonLibF4::CommonLibF4)
-add_subdirectory(${CommonLibF4PathFind} "CommonLibF4" EXCLUDE_FROM_ALL)
+add_subdirectory(${COMMON_LIB_F4VR_PATH_SELECTED} "CommonLibF4" EXCLUDE_FROM_ALL)
 # NOTE: Ensure your vcpkg manifest pins the CLF4-compatible baseline (e.g. "builtin-baseline": "b4a3d89125e45bc8f80fb94bef9761d4f4e14fb9")
 
 
