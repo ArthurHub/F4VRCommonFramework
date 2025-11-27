@@ -605,7 +605,7 @@ namespace F4SEVR
         virtual void Unk_103();
         virtual void Unk_104();
         virtual void Unk_105();
-        virtual void Unk_106();
+        virtual void Unk_106(); // this is called by setRestrict
         virtual void Unk_107();
         virtual void Unk_108();
         virtual void Unk_109();

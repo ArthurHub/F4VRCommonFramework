@@ -29,6 +29,12 @@ namespace f4cf::f4vr
     using _IsSneaking = bool(*)(F4SEVR::Actor* a_actor);
     inline REL::Relocation<_IsSneaking> IsSneaking(REL::Offset(0x24d20));
 
+    /**
+     * The papyrus Actor.SetRestrained method that prevents the player from moving, rotating, and shooting.
+     */
+    using _SetActorRestrained = bool(*)(RE::Actor* a_actor, bool a_restrict);
+    inline REL::Relocation<_SetActorRestrained> SetActorRestrained(REL::ID(316742));
+
     using _AIProcess_getAnimationManager = void(*)(uint64_t aiProcess, StackPtr<BSAnimationManager*>& manager);
     inline REL::Relocation<_AIProcess_getAnimationManager> AIProcess_getAnimationManager(REL::Offset(0xec5400));
 
