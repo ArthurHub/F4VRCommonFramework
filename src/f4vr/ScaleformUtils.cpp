@@ -10,6 +10,20 @@ using namespace RE::Scaleform;
 namespace
 {
     /**
+     * Get the currently selected index in the list or -1 if none selected.
+     */
+    int getListSelectedIndex(const GFx::Value* list)
+    {
+        GFx::Value result;
+        if (list->GetMember("selectedIndex", &result)) {
+            if (!result.IsUndefined() && result.IsInt()) {
+                return result.GetInt();
+            }
+        }
+        return -1;
+    }
+
+    /**
      * Execute an operation (moveUp, moveDown, select/press) on a generic Scaleform list element.
      */
     bool invokeOperationOnListElement(GFx::Movie* root, GFx::Value* list, const f4vr::ScaleformListOp op, const char* listPath)
@@ -25,14 +39,15 @@ namespace
             logger::debug("Move selection down on list:('{}'), success:({})", listPath, success);
             return success;
         case f4vr::ScaleformListOp::Select:
+            const int listSelectedIndex = getListSelectedIndex(list);
             GFx::Value event;
             GFx::Value args[3];
-            args[0] = "BSScrollingList::itemPress";
+            args[0] = listSelectedIndex < 0 ? "BSScrollingList::listPress" : "BSScrollingList::itemPress";
             args[1] = true;
             args[2] = true;
             root->CreateObject(&event, "flash.events.Event", args, 3);
             success = list->Invoke("dispatchEvent", nullptr, &event, 1);
-            logger::debug("Press selection on list:('{}'), success:({})", listPath, success);
+            logger::debug("Press selection on list:('{}') Index:({}), success:({})", listPath, listSelectedIndex, success);
             return success;
         }
         throw std::invalid_argument("Invalid ScaleformListOp value");
