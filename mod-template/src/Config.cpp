@@ -4,7 +4,7 @@ using namespace common;
 
 namespace
 {
-    const char* DEFAULT_SECTION = Version::PROJECT.data();
+    static constexpr auto DEFAULT_SECTION = std::string(Version::PROJECT).c_str();
 }
 
 namespace my_mod

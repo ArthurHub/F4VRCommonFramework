@@ -6,8 +6,8 @@
 
 namespace my_mod
 {
-    static const auto BASE_PATH = common::BASE_PATH + "\\" + std::string(Version::PROJECT);
-    static const auto INI_PATH = BASE_PATH + "\\" + std::string(Version::PROJECT) + ".ini";
+    static const auto BASE_MOD_PATH = BASE_PATH + "\\" + std::string(Version::PROJECT);
+    static const auto INI_PATH = BASE_MOD_PATH + "\\" + std::string(Version::PROJECT) + ".ini";
 
     class Config : public ConfigBase
     {
