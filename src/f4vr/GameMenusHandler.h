@@ -54,6 +54,11 @@ namespace f4cf::f4vr
             return _gameMenuState["PauseMenu"] == true;
         }
 
+        bool isDialogueMenuOpen()
+        {
+            return _gameMenuState["DialogueMenu"] == true;
+        }
+
         bool isGameStopped()
         {
             return std::ranges::any_of(GAME_STOPPING_MENUS, [this](const std::string& menuName) {
