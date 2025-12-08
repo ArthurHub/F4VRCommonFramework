@@ -468,6 +468,7 @@ namespace f4cf::f4vr
 
     /**
      * Update the world transform data (location,rotation,scale) of the given node by the local transform of the parent node.
+     * Use to update the real position of nodes in the world after making local changes. May be better than "UpdateWorldData" call.
      */
     void updateTransforms(RE::NiAVObject* node)
     {
@@ -489,18 +490,33 @@ namespace f4cf::f4vr
         node->world.scale = parentTransform.scale * localTransform.scale;
     }
 
-    void updateTransformsDown(RE::NiNode* node, const bool updateSelf)
+    /**
+     * Update the world transform data (location,rotation,scale) of every node in the tree by the local transform of its parent node.
+     * Use to update the real position of nodes in the world after making local changes to a node in the hierarchy. Will propagate the change
+     * to all the nodes down so a rotation of a node will affect all the child, grandchild, etc.
+     * May be better than "updateDown" call as I saw not all nodes get updated with that one.
+     */
+    void updateTransformsDown(RE::NiAVObject* node, const bool updateSelf, const char* ignoreNode)
     {
+        if (!node) {
+            return;
+        }
+
         if (updateSelf) {
             updateTransforms(node);
         }
 
-        for (const auto& child : node->children) {
-            if (child) {
-                if (const auto childNiNode = child->IsNode()) {
-                    updateTransformsDown(childNiNode, true);
-                } else if (const auto childTriNode = child->IsTriShape()) {
-                    updateTransforms(reinterpret_cast<RE::NiNode*>(childTriNode));
+        if (const auto niNode = node->IsNode()) {
+            for (const auto& child : niNode->children) {
+                if (child) {
+                    if (ignoreNode && _stricmp(child->name.c_str(), ignoreNode) == 0) {
+                        continue; // skip this node
+                    }
+                    if (const auto childNiNode = child->IsNode()) {
+                        updateTransformsDown(childNiNode, true);
+                    } else if (const auto childTriNode = child->IsTriShape()) {
+                        updateTransforms(childTriNode);
+                    }
                 }
             }
         }
