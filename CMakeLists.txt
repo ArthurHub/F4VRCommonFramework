@@ -58,7 +58,7 @@ else()
 endif()
 # Verify path is correct
 if(NOT EXISTS "${COMMON_LIB_F4VR_PATH_SELECTED}/CommonLibF4/include/REL/Relocation.h")
-  message(FATAL_ERROR ">> CommonLibF4VR path not found in '${COMMON_LIB_F4VR_PATH_SELECTED}'! Did you init submodules or set COMMON_LIB_F4VR_PATH?")
+  message(FATAL_ERROR ">> CommonLibF4VR path not found in '${COMMON_LIB_F4VR_PATH_SELECTED}'!\n >> Did you init submodules? (git submodule update --init --recursive)\n >> or set COMMON_LIB_F4VR_PATH?")
 endif()
 
 
