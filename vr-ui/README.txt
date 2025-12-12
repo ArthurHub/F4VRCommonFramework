@@ -8,7 +8,7 @@ Buttons:
 The "ui_btn_*x*.nif" files are pre-configured to select the specific button in "Textures\ui_buttons_grid.DDS" texture.
 "ui_btn_2x3.nif" configured for the second row, third column button.
 
-Messages: 
+Messages:
 The "ui_msg_*x*.nif" files are pre-configured to select the specific message box in "Textures\ui_messages_grid.DDS" texture.
 "ui_msg_4x1.nif" configured for the forth row, first column message box.
 "ui_title_1.nif" configured for the most bottom title text.
@@ -41,7 +41,7 @@ Note: only the proportions are important as the shape is always scaled, never ch
 2. In Block List tree right click on the second element: "1 BSTriShape"
 3. In Block Details table find "Vortex Data"
 4. For each of the 4 vortexes update the "Y" value to the "width/height" scale value
-4.1. i.e. if the shape width in texture is 450 width and 50 height the Y values is 9 
+4.1. i.e. if the shape width in texture is 450 width and 50 height the Y values is 9
 4.1. Make sure not to change the sign of "Y"
 5. In Header tab expand "Strings" row
 6. Update the first string float value to the new ratio. Example: "VRUI (W/H:1.5)" if the element width is 1.5 the height.
