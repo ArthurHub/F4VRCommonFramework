@@ -2,9 +2,9 @@
 
 A common framework for Fallout 4 VR F4SE mods using [CommonLibF4VR](https://github.com/ArthurHub/CommonLibF4VR).
 
-## Creating Mod using F4VRCommonFramework
+## Creating Mod using F4VR-CommonFramework
 
-Follow the [wiki](https://github.com/ArthurHub/F4VRCommonFramework/wiki)
+Follow the [wiki](https://github.com/ArthurHub/F4VR-CommonFramework/wiki)
 
 **TL;DR:**
 
@@ -12,7 +12,7 @@ Follow the [wiki](https://github.com/ArthurHub/F4VRCommonFramework/wiki)
 
 ```
 mkdir external
-git submodule add https://github.com/ArthurHub/F4VRCommonFramework.git external/F4VRCommonFramework
+git submodule add https://github.com/ArthurHub/F4VR-CommonFramework.git external/F4VR-CommonFramework
 git submodule update --init --recursive
 ```
 
@@ -20,13 +20,13 @@ git submodule update --init --recursive
 
 3. Rename all occurrences of "MyMod" in the template files.
 
-## Building F4VRCommonFramework
+## Building F4VR-CommonFramework
 
 Clone repo and setup CommonLibF4 submodule:
 
 ```
-git clone https://github.com/ArthurHub/F4VRCommonFramework.git
-cd F4VRCommonFramework
+git clone https://github.com/ArthurHub/F4VR-CommonFramework.git
+cd F4VR-CommonFramework
 git submodule update --init --recursive
 ```
 
