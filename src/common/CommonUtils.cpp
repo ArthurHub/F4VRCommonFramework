@@ -309,6 +309,15 @@ namespace f4cf::common
         return list;
     }
 
+    /**
+     * Check if a mod is loaded by checking if its dll is loaded.
+     */
+    bool isDLLModLoaded(const std::string& dllName)
+    {
+        const auto hModule = GetModuleHandleA(dllName.c_str());
+        return hModule != nullptr;
+    }
+
     RE::NiPoint3 getPointFromDebugFlowFlags()
     {
         const auto config = g_mod->getConfig();
@@ -318,6 +327,7 @@ namespace f4cf::common
     RE::NiMatrix3 getMatrixFromDebugFlowFlags()
     {
         const auto config = g_mod->getConfig();
-        return MatrixUtils::getMatrixFromEulerAngles(MatrixUtils::degreesToRads(config->debugFlowFlag1), MatrixUtils::degreesToRads(config->debugFlowFlag2), MatrixUtils::degreesToRads(config->debugFlowFlag3));
+        return MatrixUtils::getMatrixFromEulerAngles(MatrixUtils::degreesToRads(config->debugFlowFlag1), MatrixUtils::degreesToRads(config->debugFlowFlag2),
+            MatrixUtils::degreesToRads(config->debugFlowFlag3));
     }
 }
