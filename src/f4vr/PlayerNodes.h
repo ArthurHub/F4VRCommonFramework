@@ -149,4 +149,24 @@ namespace f4cf::f4vr
     {
         return getPlayerCamera()->cameraNode->world.translate;
     }
+
+    inline RE::NiNode* getLeftHandNode()
+    {
+        return isLeftHandedMode() ? getPlayerNodes()->primaryWandNode : getPlayerNodes()->SecondaryWandNode;
+    }
+
+    inline RE::NiNode* getRightHandNode()
+    {
+        return isLeftHandedMode() ? getPlayerNodes()->SecondaryWandNode : getPlayerNodes()->primaryWandNode;
+    }
+
+    inline RE::NiNode* getOffhandWandNode()
+    {
+        return getPlayerNodes()->SecondaryWandNode;
+    }
+
+    inline RE::NiNode* getPrimaryHandWandNode()
+    {
+        return getPlayerNodes()->primaryWandNode;
+    }
 }

@@ -16,13 +16,16 @@ namespace f4cf::common
         static float radsToDegrees(float rad);
         static RE::NiPoint3 rotateXY(RE::NiPoint3 vec, float angle);
         static RE::NiPoint3 pitchVec(RE::NiPoint3 vec, float angle);
-        static RE::NiTransform calculateRelocation(const RE::NiAVObject* fromNode, const RE::NiAVObject* toNode, RE::NiPoint3 offset = RE::NiPoint3::ZERO);
+        static RE::NiTransform calculateRelocation(const RE::NiAVObject* fromNode, const RE::NiAVObject* toNode);
+        static RE::NiTransform calculateRelocationWithOffsets(const RE::NiAVObject* fromNode, const RE::NiAVObject* toNode, const RE::NiPoint3& offset = RE::NiPoint3::ZERO,
+            const RE::NiMatrix3& rotationOffset = RE::NiMatrix3::IDENTITY);
 
         // matrix
         static RE::NiMatrix3 getIdentityMatrix();
         static RE::NiMatrix3 getMatrix(float r1, float r2, float r3, float r4, float r5, float r6, float r7, float r8, float r9);
         static void getEulerAnglesFromMatrix(const RE::NiMatrix3& matrix, float* heading, float* roll, float* attitude);
         static RE::NiMatrix3 getMatrixFromEulerAngles(float heading, float roll, float attitude);
+        static RE::NiMatrix3 getMatrixFromEulerAnglesDegrees(float heading, float roll, float attitude);
         static RE::NiMatrix3 getMatrixFromRotateVectorVec(const RE::NiPoint3& toVec, const RE::NiPoint3& fromVec);
         static RE::NiMatrix3 getRotationAxisAngle(RE::NiPoint3 axis, float theta);
 

@@ -2,6 +2,8 @@
 
 #include <numbers>
 
+#include "ModBase.h"
+
 namespace f4cf::common
 {
     float MatrixUtils::vec3Len(const RE::NiPoint3& v1)
@@ -11,7 +13,7 @@ namespace f4cf::common
 
     RE::NiPoint3 MatrixUtils::vec3Norm(RE::NiPoint3 v1)
     {
-        const float mag = MatrixUtils::vec3Len(v1);
+        const float mag = vec3Len(v1);
 
         if (mag < 0.000001) {
             const float maxX = abs(v1.x);
@@ -104,11 +106,24 @@ namespace f4cf::common
      * lightNode->local = calculateRelocation(lightNode, handNode);
      * This will move the light node to the hand node position and rotation.
      */
-    RE::NiTransform MatrixUtils::calculateRelocation(const RE::NiAVObject* fromNode, const RE::NiAVObject* toNode, const RE::NiPoint3 offset)
+    RE::NiTransform MatrixUtils::calculateRelocation(const RE::NiAVObject* fromNode, const RE::NiAVObject* toNode)
     {
         RE::NiTransform out;
         out.scale = fromNode->local.scale;
         out.rotate = toNode->world.rotate * fromNode->world.rotate.Transpose();
+        out.translate = fromNode->world.rotate * (toNode->world.translate + fromNode->world.translate);
+        return out;
+    }
+
+    /**
+     * Same as above but with offset and rotation offset applied.
+     */
+    RE::NiTransform MatrixUtils::calculateRelocationWithOffsets(const RE::NiAVObject* fromNode, const RE::NiAVObject* toNode, const RE::NiPoint3& offset,
+        const RE::NiMatrix3& rotationOffset)
+    {
+        RE::NiTransform out;
+        out.scale = fromNode->local.scale;
+        out.rotate = rotationOffset * toNode->world.rotate * fromNode->world.rotate.Transpose();
         out.translate = fromNode->world.rotate * (toNode->world.translate + offset - fromNode->world.translate);
         return out;
     }
@@ -175,6 +190,11 @@ namespace f4cf::common
         result.entry[1][2] = -sinX * cosY;
         result.entry[2][2] = cosX * cosY;
         return result;
+    }
+
+    RE::NiMatrix3 MatrixUtils::getMatrixFromEulerAnglesDegrees(const float heading, const float roll, const float attitude)
+    {
+        return getMatrixFromEulerAngles(degreesToRads(heading), degreesToRads(roll), degreesToRads(attitude));
     }
 
     RE::NiMatrix3 MatrixUtils::getMatrixFromRotateVectorVec(const RE::NiPoint3& toVec, const RE::NiPoint3& fromVec)
