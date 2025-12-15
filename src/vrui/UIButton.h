@@ -7,18 +7,11 @@ namespace f4cf::vrui
     class UIButton : public UIWidget
     {
     public:
-        explicit UIButton(const std::string& nifPath) :
-            UIWidget(nifPath) {}
-
-        explicit UIButton(const std::string& name, RE::NiNode* node) :
-            UIWidget(name, node) {}
-
-        void setOnPressHandler(std::function<void(UIWidget*)> handler)
-        {
-            _onPressEventHandler = std::move(handler);
-        }
-
+        explicit UIButton(const std::string& nifPath);
+        explicit UIButton(const std::string& name, RE::NiNode* node);
         virtual std::string toString() const override;
+
+        void setOnPressHandler(std::function<void(UIWidget*)> handler);
 
     protected:
         virtual bool isPressable() const override { return _visible && _onPressEventHandler != nullptr; }

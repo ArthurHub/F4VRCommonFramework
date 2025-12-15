@@ -5,9 +5,16 @@
 #include "UIManager.h"
 #include "common/CommonUtils.h"
 
-
 namespace f4cf::vrui
 {
+    UIContainer::UIContainer(const std::string& name, const UIContainerLayout layout, const float padding, const float scale) :
+        UIElement(name),
+        _layout(layout),
+        _padding(padding)
+    {
+        setScale(scale);
+    }
+
     std::string UIContainer::toString() const
     {
         const auto calculatedSize = calcSize();
@@ -44,6 +51,21 @@ namespace f4cf::vrui
         return _layout == UIContainerLayout::HorizontalCenter ||
             _layout == UIContainerLayout::HorizontalRight ||
             _layout == UIContainerLayout::HorizontalLeft;
+    }
+
+    float UIContainer::getPadding() const
+    {
+        return _padding;
+    }
+
+    void UIContainer::setPadding(const float padding)
+    {
+        _padding = padding;
+    }
+
+    std::vector<std::shared_ptr<UIElement>> UIContainer::childElements() const
+    {
+        return _childElements;
     }
 
     /**
@@ -264,6 +286,16 @@ namespace f4cf::vrui
         if (_attachNode) {
             g_uiManager->attachElement(element, _attachNode.get());
         }
+    }
+
+    UIContainerLayout UIContainer::getLayout() const
+    {
+        return _layout;
+    }
+
+    void UIContainer::setLayout(const UIContainerLayout layout)
+    {
+        _layout = layout;
     }
 
     /**

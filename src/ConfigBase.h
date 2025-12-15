@@ -20,23 +20,8 @@ namespace f4cf
 
         virtual ~ConfigBase() = default;
 
-        /**
-         * Load the config from the INI file.
-         */
-        virtual void load()
-        {
-            logger::info("Load ini config...");
-            common::createDirDeep(_iniFilePath);
-            loadIniConfig();
-        }
-
-        /**
-         * Save the current in-memory config values to the INI file.
-         */
-        virtual void save()
-        {
-            saveIniConfig();
-        }
+        virtual void load();
+        virtual void save();
 
         void loadEmbeddedDefaultOnly();
 

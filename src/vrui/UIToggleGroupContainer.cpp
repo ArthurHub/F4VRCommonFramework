@@ -6,6 +6,9 @@
 
 namespace f4cf::vrui
 {
+    UIToggleGroupContainer::UIToggleGroupContainer(const std::string& name, const UIContainerLayout layout, const float padding) :
+        UIContainer(name, layout, padding) {}
+
     std::string UIToggleGroupContainer::toString() const
     {
         const auto calculatedSize = calcSize();

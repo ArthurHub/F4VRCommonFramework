@@ -18,14 +18,12 @@ namespace f4cf::vrui
     public:
         using StateType = StateT;
 
-        explicit UIMultiStateToggleButton(const std::map<StateType, std::string>& nifPathPerState,
-            float scale = 1.0f);
+        explicit UIMultiStateToggleButton(const std::map<StateType, std::string>& nifPathPerState, float scale = 1.0f);
 
         StateType getState() const;
         void setState(const StateType& state);
 
-        void setOnStateChangedHandler(
-            std::function<void(UIMultiStateToggleButton<StateType>*, StateType)> handler);
+        void setOnStateChangedHandler(std::function<void(UIMultiStateToggleButton<StateType>*, StateType)> handler);
 
         virtual std::string toString() const override;
 
@@ -47,9 +45,7 @@ namespace f4cf::vrui
     };
 
     template <class StateT>
-    UIMultiStateToggleButton<StateT>::UIMultiStateToggleButton(
-        const std::map<StateT, std::string>& nifPathPerState,
-        const float scale) :
+    UIMultiStateToggleButton<StateT>::UIMultiStateToggleButton(const std::map<StateT, std::string>& nifPathPerState, const float scale) :
         UIWidget("", nullptr)
     {
         bool first = true;
@@ -99,8 +95,7 @@ namespace f4cf::vrui
     template <class StateT>
     std::string UIMultiStateToggleButton<StateT>::toString() const
     {
-        return std::format(
-            "UIMultiStateToggleButton({}): {}{}{}, Pos({:.2f}, {:.2f}, {:.2f}), Size({:.2f}, {:.2f})",
+        return std::format("UIMultiStateToggleButton({}): {}{}{}, Pos({:.2f}, {:.2f}, {:.2f}), Size({:.2f}, {:.2f})",
             _name,
             _visible ? "V" : "H",
             isPressable() ? "P" : ".",

@@ -7,34 +7,19 @@ namespace f4cf::vrui
     class UIToggleButton : public UIWidget
     {
     public:
-        explicit UIToggleButton(const std::string& nifPath) :
-            UIWidget(nifPath)
-        {
-            auto [frameNode, widthToHeightRatio] = UIUtils::getUINodeFromNifFile(UIUtils::getToggleButtonFrameNifName());
-            _toggleFrameNode.reset(frameNode);
-        }
+        explicit UIToggleButton(const std::string& nifPath);
+        virtual std::string toString() const override;
 
         // is the button is currently toggled ON or OFF
         bool isToggleOn() const { return _isToggleOn; }
 
-        void setToggleState(const bool isToggleOn)
-        {
-            if (_isToggleOn != isToggleOn) {
-                _isToggleOn = isToggleOn;
-                onStateChanged(this);
-            }
-        }
+        void setToggleState(const bool isToggleOn);
 
         // is a user is allowed to un-toggle the button (useful for toggle group)
-        bool isUnToggleAllowed() const { return _isUnToggleAllowed; }
-        void setUnToggleAllowed(const bool allowUnToggle) { _isUnToggleAllowed = allowUnToggle; }
+        bool isUnToggleAllowed() const;
+        void setUnToggleAllowed(bool allowUnToggle);
 
-        void setOnToggleHandler(std::function<void(UIToggleButton*, bool)> handler)
-        {
-            _onToggleEventHandler = std::move(handler);
-        }
-
-        virtual std::string toString() const override;
+        void setOnToggleHandler(std::function<void(UIToggleButton*, bool)> handler);
 
     protected:
         virtual void attachToNode(RE::NiNode* node) override;

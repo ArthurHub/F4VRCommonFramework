@@ -8,19 +8,8 @@ namespace f4cf::vrui
     class UIWidget : public UIElement
     {
     public:
-        explicit UIWidget(const std::string& nifPath, const float scale = 1.0f)
-        {
-            auto [node, widthToHeightRatio] = UIUtils::getUINodeFromNifFile(nifPath);
-            _node.reset(node);
-            _size = UIUtils::getElementSize(widthToHeightRatio);
-            _name = node->name;
-            setScale(scale);
-        }
-
-        explicit UIWidget(const std::string& name, RE::NiNode* node) :
-            UIElement(name),
-            _node(node) {}
-
+        explicit UIWidget(const std::string& nifPath, const float scale = 1.0f);
+        explicit UIWidget(const std::string& name, RE::NiNode* node);
         virtual std::string toString() const override;
 
     protected:

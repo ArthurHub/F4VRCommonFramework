@@ -5,6 +5,13 @@
 
 namespace f4cf::vrui
 {
+    UIToggleButton::UIToggleButton(const std::string& nifPath) :
+        UIWidget(nifPath)
+    {
+        auto [frameNode, widthToHeightRatio] = UIUtils::getUINodeFromNifFile(UIUtils::getToggleButtonFrameNifName());
+        _toggleFrameNode.reset(frameNode);
+    }
+
     std::string UIToggleButton::toString() const
     {
         return std::format("UIToggleButton({}): {}{}{}, Pos({:.2f}, {:.2f}, {:.2f}), Size({:.2f}, {:.2f})",
@@ -18,6 +25,29 @@ namespace f4cf::vrui
             _size.width,
             _size.height
             );
+    }
+
+    void UIToggleButton::setToggleState(const bool isToggleOn)
+    {
+        if (_isToggleOn != isToggleOn) {
+            _isToggleOn = isToggleOn;
+            onStateChanged(this);
+        }
+    }
+
+    bool UIToggleButton::isUnToggleAllowed() const
+    {
+        return _isUnToggleAllowed;
+    }
+
+    void UIToggleButton::setUnToggleAllowed(const bool allowUnToggle)
+    {
+        _isUnToggleAllowed = allowUnToggle;
+    }
+
+    void UIToggleButton::setOnToggleHandler(std::function<void(UIToggleButton*, bool)> handler)
+    {
+        _onToggleEventHandler = std::move(handler);
     }
 
     void UIToggleButton::attachToNode(RE::NiNode* node)

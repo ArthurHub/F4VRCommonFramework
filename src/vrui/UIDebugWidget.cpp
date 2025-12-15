@@ -8,6 +8,12 @@ using namespace common;
 
 namespace f4cf::vrui
 {
+    UIDebugWidget::UIDebugWidget(const bool followInteractPos) :
+        UIWidget(UIUtils::getDebugSphereNifName())
+    {
+        _followInteractionPosition = followInteractPos;
+    }
+
     std::string UIDebugWidget::toString() const
     {
         return std::format("UIDebugWidget: {}{}, Pos({:.2f}, {:.2f}, {:.2f}), Size({:.2f}, {:.2f})",
@@ -37,5 +43,15 @@ namespace f4cf::vrui
                 _node->local.translate = RE::NiPoint3(0, 0, 0);
             }
         }
+    }
+
+    bool UIDebugWidget::isFollowInteractionPosition() const
+    {
+        return _followInteractionPosition;
+    }
+
+    void UIDebugWidget::setFollowInteractionPosition(const bool followInteractionPosition)
+    {
+        _followInteractionPosition = followInteractionPosition;
     }
 }

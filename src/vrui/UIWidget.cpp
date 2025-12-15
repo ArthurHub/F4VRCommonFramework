@@ -6,6 +6,19 @@ using namespace common;
 
 namespace f4cf::vrui
 {
+    UIWidget::UIWidget(const std::string& nifPath, const float scale)
+    {
+        auto [node, widthToHeightRatio] = UIUtils::getUINodeFromNifFile(nifPath);
+        _node.reset(node);
+        _size = UIUtils::getElementSize(widthToHeightRatio);
+        _name = node->name;
+        setScale(scale);
+    }
+
+    UIWidget::UIWidget(const std::string& name, RE::NiNode* node) :
+        UIElement(name),
+        _node(node) {}
+
     std::string UIWidget::toString() const
     {
         return std::format("UIWidget({}): {}{}, Pos({:.2f}, {:.2f}, {:.2f}), Size({:.2f}, {:.2f})",

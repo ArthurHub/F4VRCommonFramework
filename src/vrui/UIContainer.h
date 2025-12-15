@@ -30,28 +30,21 @@ namespace f4cf::vrui
     class UIContainer : public UIElement
     {
     public:
-        explicit UIContainer(const std::string& name, const UIContainerLayout layout = UIContainerLayout::Manual, const float padding = 0, const float scale = 1) :
-            UIElement(name),
-            _layout(layout),
-            _padding(padding)
-        {
-            setScale(scale);
-        }
+        explicit UIContainer(const std::string& name, const UIContainerLayout layout = UIContainerLayout::Manual, const float padding = 0, const float scale = 1);
+        virtual std::string toString() const override;
 
         virtual void onFrameUpdate(UIFrameUpdateContext* adapter) override;
         virtual void onLayoutUpdate(UIFrameUpdateContext* adapter) override;
         void addElement(const std::shared_ptr<UIElement>& element);
 
-        UIContainerLayout getLayout() const { return _layout; }
-        void setLayout(const UIContainerLayout layout) { _layout = layout; }
+        UIContainerLayout getLayout() const;
+        void setLayout(const UIContainerLayout layout);
         bool isHorizontalLayout() const;
 
-        float getPadding() const { return _padding; }
-        void setPadding(const float padding) { _padding = padding; }
+        float getPadding() const;
+        void setPadding(const float padding);
 
-        std::vector<std::shared_ptr<UIElement>> childElements() const { return _childElements; }
-
-        virtual std::string toString() const override;
+        std::vector<std::shared_ptr<UIElement>> childElements() const;
 
     protected:
         virtual void attachToNode(RE::NiNode* attachNode) override;

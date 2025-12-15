@@ -37,6 +37,24 @@ namespace f4cf
     constexpr auto INI_SECTION_VRUI = "VRUI_DevLayout";
 
     /**
+     * Load the config from the INI file.
+     */
+    void ConfigBase::load()
+    {
+        logger::info("Load ini config...");
+        common::createDirDeep(_iniFilePath);
+        loadIniConfig();
+    }
+
+    /**
+     * Save the current in-memory config values to the INI file.
+     */
+    void ConfigBase::save()
+    {
+        saveIniConfig();
+    }
+
+    /**
      * Load the embedded ini with default values and not the on-disk file.
      */
     void ConfigBase::loadEmbeddedDefaultOnly()

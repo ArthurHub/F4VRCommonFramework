@@ -25,6 +25,21 @@ namespace
 
 namespace f4cf::vrui
 {
+    std::string UIUtils::getDebugSphereNifName()
+    {
+        return "FRIK\\1x1Sphere.nif";
+    }
+
+    std::string UIUtils::getEmptyButtonFrameNifName()
+    {
+        return "FRIK\\UI_Common\\btn_empty.nif";
+    }
+
+    std::string UIUtils::getToggleButtonFrameNifName()
+    {
+        return "FRIK\\UI_Common\\btn_border.nif";
+    }
+
     /**
      * Get the size of a UI element based on its width-to-height ratio.
      * The way VR UI nifs are defined is that the height is always 2.0f units and the width is

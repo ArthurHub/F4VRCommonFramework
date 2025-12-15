@@ -7,22 +7,13 @@ namespace f4cf::vrui
     class UIDebugWidget : public UIWidget
     {
     public:
-        explicit UIDebugWidget(const bool followInteractPos = false) :
-            UIWidget(UIUtils::getDebugSphereNifName())
-        {
-            _followInteractionPosition = followInteractPos;
-        }
+        explicit UIDebugWidget(const bool followInteractPos = false);
+        virtual std::string toString() const override;
 
         virtual void onFrameUpdate(UIFrameUpdateContext* adapter) override;
 
-        bool isFollowInteractionPosition() const { return _followInteractionPosition; }
-
-        void setFollowInteractionPosition(const bool followInteractionPosition)
-        {
-            _followInteractionPosition = followInteractionPosition;
-        }
-
-        virtual std::string toString() const override;
+        bool isFollowInteractionPosition() const;
+        void setFollowInteractionPosition(const bool followInteractionPosition);
 
     protected:
         bool _followInteractionPosition = false;

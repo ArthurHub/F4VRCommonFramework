@@ -4,6 +4,12 @@
 
 namespace f4cf::vrui
 {
+    UIButton::UIButton(const std::string& nifPath) :
+        UIWidget(nifPath) {}
+
+    UIButton::UIButton(const std::string& name, RE::NiNode* node) :
+        UIWidget(name, node) {}
+
     std::string UIButton::toString() const
     {
         return std::format("UIButton({}): {}{}, Pos({:.2f}, {:.2f}, {:.2f}), Size({:.2f}, {:.2f})",
@@ -16,6 +22,11 @@ namespace f4cf::vrui
             _size.width,
             _size.height
             );
+    }
+
+    void UIButton::setOnPressHandler(std::function<void(UIWidget*)> handler)
+    {
+        _onPressEventHandler = std::move(handler);
     }
 
     void UIButton::onPressEventFired(UIElement* element, UIFrameUpdateContext* context)

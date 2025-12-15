@@ -9,8 +9,7 @@ namespace f4cf::vrui
     class UIToggleGroupContainer : public UIContainer
     {
     public:
-        explicit UIToggleGroupContainer(const std::string& name, const UIContainerLayout layout = UIContainerLayout::Manual, const float padding = 0) :
-            UIContainer(name, layout, padding) {}
+        explicit UIToggleGroupContainer(const std::string& name, const UIContainerLayout layout = UIContainerLayout::Manual, const float padding = 0);
 
         void addElement(const std::shared_ptr<UIToggleButton>& button);
 
