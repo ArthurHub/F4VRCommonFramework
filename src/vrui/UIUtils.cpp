@@ -1,5 +1,6 @@
 #include "UIUtils.h"
 
+#include "ModBase.h"
 #include "f4vr/PlayerNodes.h"
 #include "vrcf/VRControllersManager.h"
 
@@ -27,17 +28,17 @@ namespace f4cf::vrui
 {
     std::string UIUtils::getDebugSphereNifName()
     {
-        return "FRIK\\1x1Sphere.nif";
+        return g_mod->getName() + "\\1x1Sphere.nif";
     }
 
     std::string UIUtils::getEmptyButtonFrameNifName()
     {
-        return "FRIK\\UI_Common\\btn_empty.nif";
+        return g_mod->getName() + "\\UI_Common\\btn_empty.nif";
     }
 
     std::string UIUtils::getToggleButtonFrameNifName()
     {
-        return "FRIK\\UI_Common\\btn_border.nif";
+        return g_mod->getName() + "\\UI_Common\\btn_border.nif";
     }
 
     /**

@@ -10,6 +10,7 @@ namespace f4cf
         struct Settings
         {
             std::string name;
+            std::string f4seName;
             std::string version;
             ConfigBase* config;
             std::string logFileName = name;
@@ -17,17 +18,18 @@ namespace f4cf
             bool setupMainGameLoop = false;
 
             Settings(const std::string_view& name, const std::string_view& version, ConfigBase* config);
-
             Settings(const std::string_view& name, const std::string_view& version, ConfigBase* config, int trampolineAllocationSize, bool setupMainGameLoop);
-
             Settings(const std::string_view& name, const std::string_view& version, ConfigBase* config, const std::string_view& logFileName, int trampolineAllocationSize,
                 bool setupMainGameLoop);
+            Settings(const std::string_view& name, const std::string_view& f4seName, const std::string_view& version, ConfigBase* config, const std::string_view& logFileName,
+                int trampolineAllocationSize, bool setupMainGameLoop);
         };
 
         explicit ModBase(Settings settings);
         virtual ~ModBase() = default;
 
-        ConfigBase* getConfig() const { return _settings.config; }
+        const std::string& getName() const;
+        ConfigBase* getConfig() const;
 
         bool onF4SEPluginQuery(const F4SE::QueryInterface* skse, F4SE::PluginInfo* info) const;
         bool onF4SEPluginLoad(const F4SE::LoadInterface* f4se);

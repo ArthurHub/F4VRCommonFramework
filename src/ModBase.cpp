@@ -16,6 +16,7 @@ namespace f4cf
 {
     ModBase::Settings::Settings(const std::string_view& name, const std::string_view& version, ConfigBase* config) :
         name(name),
+        f4seName(name),
         version(version),
         config(config),
         logFileName(name) {}
@@ -23,6 +24,7 @@ namespace f4cf
     ModBase::Settings::Settings(const std::string_view& name, const std::string_view& version, ConfigBase* config, const int trampolineAllocationSize,
         const bool setupMainGameLoop) :
         name(name),
+        f4seName(name),
         version(version),
         config(config),
         logFileName(name),
@@ -32,6 +34,17 @@ namespace f4cf
     ModBase::Settings::Settings(const std::string_view& name, const std::string_view& version, ConfigBase* config, const std::string_view& logFileName,
         const int trampolineAllocationSize, const bool setupMainGameLoop) :
         name(name),
+        f4seName(name),
+        version(version),
+        config(config),
+        logFileName(logFileName),
+        trampolineAllocationSize(trampolineAllocationSize),
+        setupMainGameLoop(setupMainGameLoop) {}
+
+    ModBase::Settings::Settings(const std::string_view& name, const std::string_view& f4seName, const std::string_view& version, ConfigBase* config,
+        const std::string_view& logFileName, const int trampolineAllocationSize, const bool setupMainGameLoop) :
+        name(name),
+        f4seName(f4seName),
         version(version),
         config(config),
         logFileName(logFileName),
@@ -47,6 +60,16 @@ namespace f4cf
         g_mod = this;
     }
 
+    const std::string& ModBase::getName() const
+    {
+        return _settings.name;
+    }
+
+    ConfigBase* ModBase::getConfig() const
+    {
+        return _settings.config;
+    }
+
     /**
      * Run F4SE plugin query to check compatibility and fill out plugin info.
      */
@@ -59,7 +82,7 @@ namespace f4cf
                 logPluginGameStart();
 
                 info->infoVersion = F4SE::PluginInfo::kVersion;
-                info->name = _settings.name.c_str();
+                info->name = _settings.f4seName.c_str();
                 std::string tmp = _settings.version;
                 std::erase(tmp, '.');
                 info->version = std::stoi(tmp);
@@ -163,7 +186,7 @@ namespace f4cf
         }
 
         if (msg->type == F4SE::MessagingInterface::kPostLoadGame || msg->type == F4SE::MessagingInterface::kNewGame) {
-            // If a game is loaded or a new game started re-initialize FRIK for clean slate
+            // If a game is loaded or a new game started re-initialize mod for clean slate
             logger::info("F4VRSE On Post Load Message...");
             g_mod->onGameSessionLoadedInner();
         }
