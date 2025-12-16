@@ -9,20 +9,30 @@ namespace f4cf
     public:
         struct Settings
         {
+            // the name used for logging and VRUI folder structure
             std::string name;
+            // the name reported to F4SE system (generally should be the same as name)
             std::string f4seName;
+            // the version reported to F4SE system
             std::string version;
+            // the singleton config object used by the mod
             ConfigBase* config;
+            // the name of the log file
             std::string logFileName = name;
+            // size of memory allocation for trampolines
             int trampolineAllocationSize = 256;
+            // if to set up hook to call onFrameUpdate on every game frame
             bool setupMainGameLoop = false;
+            // setting game loop late means that this mod will be the first to have its onFrameUpdate called
+            // important for mods like FRIK that update the player skeleton
+            bool setupMainGameLoopLate = false;
 
             Settings(const std::string_view& name, const std::string_view& version, ConfigBase* config);
             Settings(const std::string_view& name, const std::string_view& version, ConfigBase* config, int trampolineAllocationSize, bool setupMainGameLoop);
             Settings(const std::string_view& name, const std::string_view& version, ConfigBase* config, const std::string_view& logFileName, int trampolineAllocationSize,
                 bool setupMainGameLoop);
             Settings(const std::string_view& name, const std::string_view& f4seName, const std::string_view& version, ConfigBase* config, const std::string_view& logFileName,
-                int trampolineAllocationSize, bool setupMainGameLoop);
+                int trampolineAllocationSize, bool setupMainGameLoop, bool setupMainGameLoopLate = false);
         };
 
         explicit ModBase(Settings settings);

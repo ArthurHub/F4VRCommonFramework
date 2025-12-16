@@ -42,14 +42,15 @@ namespace f4cf
         setupMainGameLoop(setupMainGameLoop) {}
 
     ModBase::Settings::Settings(const std::string_view& name, const std::string_view& f4seName, const std::string_view& version, ConfigBase* config,
-        const std::string_view& logFileName, const int trampolineAllocationSize, const bool setupMainGameLoop) :
+        const std::string_view& logFileName, const int trampolineAllocationSize, const bool setupMainGameLoop, const bool setupMainGameLoopLate) :
         name(name),
         f4seName(f4seName),
         version(version),
         config(config),
         logFileName(logFileName),
         trampolineAllocationSize(trampolineAllocationSize),
-        setupMainGameLoop(setupMainGameLoop) {}
+        setupMainGameLoop(setupMainGameLoop),
+        setupMainGameLoopLate(setupMainGameLoopLate) {}
 
     ModBase::ModBase(Settings settings) :
         _settings(std::move(settings))
@@ -129,6 +130,10 @@ namespace f4cf
                 logger::info("Load Mod...");
                 onModLoaded(f4se);
 
+                if (_settings.setupMainGameLoop && !_settings.setupMainGameLoopLate) {
+                    main_hook::hook();
+                }
+
                 logger::info("Load successful");
                 success = true;
             }
@@ -201,7 +206,7 @@ namespace f4cf
             {
                 vrui::initUIManager();
 
-                if (_settings.setupMainGameLoop) {
+                if (_settings.setupMainGameLoop && _settings.setupMainGameLoopLate) {
                     main_hook::hook();
                 }
 
