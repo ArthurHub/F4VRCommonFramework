@@ -319,4 +319,10 @@ namespace f4cf::f4vr
     inline REL::Relocation hookActor_SetupAnimationUpdateDataForRefernce(REL::Offset(0xf0fbdf));
 
     inline REL::Relocation wandMesh(REL::Offset(0x2d686d8));
+
+    // Load a specific texture by file path like "data\Textures\Effects\Gobos\FlashlightGobo01.DDS"
+    // call with: unk1=1, unk2=0, unk3=0, unk4=0
+    // the texture is cashed by the game so this can be used to load textures that are later used by the game by replacing the caching key (path)
+    typedef void (*_LoadTextureByPath)(const char* filePath, bool unk1, RE::NiTexture*& texture, int32_t unk2, uint64_t unk3, uint64_t unk4);
+    inline REL::Relocation<_LoadTextureByPath> LoadTextureByPath(REL::Offset(0x027F5520));
 }
