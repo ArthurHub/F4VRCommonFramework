@@ -200,9 +200,7 @@ namespace f4cf
     void ConfigBase::saveIniConfig()
     {
         CSimpleIniA ini;
-        SI_Error rc = ini.LoadFile(_iniFilePath.c_str());
-        if (rc < 0) {
-            logger::warn("Failed to open INI config for saving with code: {}", rc);
+        if (!loadIniFromFile(ini)) {
             return;
         }
 
@@ -212,8 +210,30 @@ namespace f4cf
         // handle VRUI section by either clearing it or writing all values
         saveVRUIIniSection(ini);
 
+        saveIniToFile(ini);
+    }
+
+    /**
+     * Load the INI file into the given CSimpleIniA instance.
+     */
+    bool ConfigBase::loadIniFromFile(CSimpleIniA& ini) const
+    {
+        const auto rc = ini.LoadFile(_iniFilePath.c_str());
+        if (rc < 0) {
+            logger::warn("Failed to open INI config for saving with code: {}", rc);
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Save the INI config to the specified ini config file.
+     */
+    void ConfigBase::saveIniToFile(const CSimpleIniA& ini)
+    {
         _ignoreNextIniFileChange.store(true);
-        rc = ini.SaveFile(_iniFilePath.c_str());
+
+        const auto rc = ini.SaveFile(_iniFilePath.c_str());
         if (rc < 0) {
             logger::error("Config: Failed to save .ini. Error: {}", rc);
         } else {

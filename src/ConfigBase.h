@@ -49,6 +49,8 @@ namespace f4cf
         void loadVRUISection(const CSimpleIniA& ini);
         void loadIniConfigValues();
         void saveVRUIIniSection(CSimpleIniA& ini);
+        bool loadIniFromFile(CSimpleIniA& ini) const;
+        void saveIniToFile(const CSimpleIniA& ini);
         void saveIniConfig();
         void saveIniConfigValue(const char* section, const char* key, bool value);
         void saveIniConfigValue(const char* section, const char* key, int value);
