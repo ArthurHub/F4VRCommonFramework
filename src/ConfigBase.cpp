@@ -72,6 +72,27 @@ namespace f4cf
     }
 
     /**
+     * Subscribe to ini change events to receive notification when mod ini file changed externally.
+     * Used for refresh the mod config at runtime without restarting the game.
+     * Key used to identify the subscription, for unsubscribe, and prevent duplicates.
+     */
+    void ConfigBase::subscribeForIniChangedEvent(const std::string& key, const std::function<void(const std::string&)>& callback)
+    {
+        if (_onIniConfigChangedSubscribers.contains(key)) {
+            throw std::runtime_error("ConfigBase::subscribeForIniChangedEvent: Key '" + key + "' is already subscribed!");
+        }
+        _onIniConfigChangedSubscribers.emplace(key, callback);
+    }
+
+    /**
+     * Remove ini change subscription for the given key.
+     */
+    void ConfigBase::unsubscribeFromIniChangedEvent(const std::string& key)
+    {
+        _onIniConfigChangedSubscribers.erase(key);
+    }
+
+    /**
      * Check if debug data dump is requested for the given name.
      * If matched, the name will be removed from the list to prevent multiple dumps.
      * Also saved into INI to prevent reloading the same dump name on next config reload.
@@ -534,6 +555,11 @@ namespace f4cf
 
                     logger::info("INI config change detected ({}), reload...", common::toDateTimeString(writeTime));
                     loadIniConfigValues();
+
+                    for (const auto& [key, subscriber] : _onIniConfigChangedSubscribers) {
+                        logger::info("Notify INI config change subscriber '{}'", key.c_str());
+                        subscriber(key);
+                    }
                 });
         }).detach();
     }

@@ -25,6 +25,9 @@ namespace f4cf
 
         void loadEmbeddedDefaultOnly();
 
+        void subscribeForIniChangedEvent(const std::string& key, const std::function<void(const std::string&)>& callback);
+        void unsubscribeFromIniChangedEvent(const std::string& key);
+
         bool checkDebugDumpDataOnceFor(const char* name);
 
         // Can be used to test things at runtime during development
@@ -98,6 +101,9 @@ namespace f4cf
 
         // INI config file last write time to prevent reload the same change because of OS multiple events
         std::atomic<std::filesystem::file_time_type> _lastIniFileWriteTime;
+
+        // Callbacks to notify when INI config is changed
+        std::unordered_map<std::string, std::function<void(const std::string&)>> _onIniConfigChangedSubscribers;
 
         // Handle ignoring file watch change event IFF the change was made by us
         std::atomic<bool> _ignoreNextIniFileChange = false;
