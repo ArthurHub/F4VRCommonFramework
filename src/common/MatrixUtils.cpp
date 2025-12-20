@@ -110,21 +110,25 @@ namespace f4cf::common
     {
         RE::NiTransform out;
         out.scale = fromNode->local.scale;
-        out.rotate = toNode->world.rotate * fromNode->world.rotate.Transpose();
-        out.translate = fromNode->world.rotate * (toNode->world.translate + fromNode->world.translate);
+        out.rotate = toNode->world.rotate * fromNode->parent->world.rotate.Transpose();
+        out.translate = fromNode->parent->world.rotate * ((toNode->world.translate - fromNode->parent->world.translate) / fromNode->parent->world.scale);
         return out;
     }
 
     /**
      * Same as above but with offset and rotation offset applied.
      */
-    RE::NiTransform MatrixUtils::calculateRelocationWithOffsets(const RE::NiAVObject* fromNode, const RE::NiAVObject* toNode, const RE::NiPoint3& offset,
-        const RE::NiMatrix3& rotationOffset)
+    RE::NiTransform MatrixUtils::calculateRelocation(const RE::NiAVObject* fromNode, const RE::NiAVObject* toNode, const RE::NiPoint3& offset, const RE::NiMatrix3& rotationOffset)
     {
         RE::NiTransform out;
         out.scale = fromNode->local.scale;
-        out.rotate = rotationOffset * toNode->world.rotate * fromNode->world.rotate.Transpose();
-        out.translate = fromNode->world.rotate * (toNode->world.translate + offset - fromNode->world.translate);
+        out.rotate = rotationOffset * toNode->world.rotate * fromNode->parent->world.rotate.Transpose();
+
+        // TODO: better understand this calculation and how to make it work for all toNodes
+        const auto pos = toNode->parent->world.rotate.Transpose() * ((toNode->local.translate + offset) * toNode->parent->world.scale);
+        const auto newToNodePos = toNode->parent->world.translate + pos;
+        out.translate = fromNode->parent->world.rotate * ((newToNodePos - fromNode->parent->world.translate) / fromNode->parent->world.scale);
+
         return out;
     }
 

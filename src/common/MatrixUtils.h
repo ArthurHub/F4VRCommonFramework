@@ -17,8 +17,7 @@ namespace f4cf::common
         static RE::NiPoint3 rotateXY(RE::NiPoint3 vec, float angle);
         static RE::NiPoint3 pitchVec(RE::NiPoint3 vec, float angle);
         static RE::NiTransform calculateRelocation(const RE::NiAVObject* fromNode, const RE::NiAVObject* toNode);
-        static RE::NiTransform calculateRelocationWithOffsets(const RE::NiAVObject* fromNode, const RE::NiAVObject* toNode, const RE::NiPoint3& offset = RE::NiPoint3::ZERO,
-            const RE::NiMatrix3& rotationOffset = RE::NiMatrix3::IDENTITY);
+        static RE::NiTransform calculateRelocation(const RE::NiAVObject* fromNode, const RE::NiAVObject* toNode, const RE::NiPoint3& offset, const RE::NiMatrix3& rotationOffset);
 
         // matrix
         static RE::NiMatrix3 getIdentityMatrix();
