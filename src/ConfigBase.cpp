@@ -477,7 +477,7 @@ namespace f4cf
     /**
      * Save the given offsets transform to a json file using the given name.
      */
-    void ConfigBase::saveOffsetsToJsonFile(const std::string& name, const RE::NiTransform& transform, const std::string& file)
+    bool ConfigBase::saveOffsetsToJsonFile(const std::string& name, const RE::NiTransform& transform, const std::string& file)
     {
         logger::info("Saving offsets '{}' to '{}'", name.c_str(), file.c_str());
         json offsetJson;
@@ -495,14 +495,16 @@ namespace f4cf
         outF.open(file, std::ios::out);
         if (outF.fail()) {
             logger::info("cannot open '{}' for writing", file.c_str());
-            return;
+            return false;
         }
         try {
             outF << std::setw(4) << offsetJson;
             outF.close();
+            return true;
         } catch (std::exception& e) {
             outF.close();
             logger::warn("Unable to save json '{}': {}", file.c_str(), e.what());
+            return false;
         }
     }
 

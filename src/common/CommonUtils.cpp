@@ -203,6 +203,19 @@ namespace f4cf::common
     }
 
     /**
+     * Removes illegal characters from a path string for Windows.
+     */
+    std::string sanitizePathWindows(const std::string& path)
+    {
+        std::string sanitized = path;
+        constexpr auto illegal = "<>:\"/\\|?*";
+        std::erase_if(sanitized, [](const unsigned char c) {
+            return c < 32 || std::string_view(illegal).find(c) != std::string_view::npos;
+        });
+        return sanitized;
+    }
+
+    /**
      * Wait for the debugger to attach.
      */
     void waitForDebugger()

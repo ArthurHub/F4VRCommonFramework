@@ -25,6 +25,7 @@ namespace f4cf::common
     std::string getRelativePathInDocuments(const std::string& relPath);
     void moveFileSafe(const std::string& fromPath, const std::string& toPath);
     void moveAllFilesInFolderSafe(const std::string& fromPath, const std::string& toPath);
+    std::string sanitizePathWindows(const std::string& string);
 
     // Miscellaneous functions
     void waitForDebugger();

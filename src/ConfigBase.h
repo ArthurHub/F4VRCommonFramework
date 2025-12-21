@@ -63,7 +63,7 @@ namespace f4cf
         static std::unordered_map<std::string, RE::NiTransform> loadEmbeddedOffsets(WORD fromResourceId, WORD toResourceId);
         static void loadOffsetJsonFile(const std::string& file, std::unordered_map<std::string, RE::NiTransform>& offsetsMap);
         static std::unordered_map<std::string, RE::NiTransform> loadOffsetsFromFilesystem(const std::string& path);
-        static void saveOffsetsToJsonFile(const std::string& name, const RE::NiTransform& transform, const std::string& file);
+        static bool saveOffsetsToJsonFile(const std::string& name, const RE::NiTransform& transform, const std::string& file);
 
         /**
          * Custom code to migrate the INI config to the latest version.
